@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ClienteModule } from './clientes/cliente/cliente.module';
-import { CitasModule } from './citas/citas.module';
-import { BarbershopModule } from './barbershop/barbershop.module';
-import { BarberoModule } from './barbero/barbero.module';
-import { HorarioAtencionModule } from './horario_atencion/horario_atencion.module';
+import { ClienteModule } from './modules/clientes/cliente/cliente.module';
+import { CitasModule } from './modules/citas/citas.module';
+import { BarbershopModule } from './modules/barbershop/barbershop.module';
+import { BarberoModule } from './modules/barbero/barbero.module';
+import { HorarioAtencionModule } from './modules/horario_atencion/horario_atencion.module';
 import { LoginModule } from './auth/login/login.module';
 import { UserModule } from './auth/user/user.module';
 
@@ -18,7 +18,7 @@ import { UserModule } from './auth/user/user.module';
       password: process.env.DB_PASSWORD ?? 'postgres',
       database: process.env.DB_NAME ?? 'bbs',
       autoLoadEntities: true,
-      synchronize: true,
+      synchronize: false,
       retryAttempts: 5,
       retryDelay: 2000,
     }),
