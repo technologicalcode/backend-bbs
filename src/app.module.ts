@@ -5,6 +5,7 @@ import { CitasModule } from './modules/citas/citas.module';
 import { BarbershopModule } from './modules/barbershop/barbershop.module';
 import { BarberoModule } from './modules/barbero/barbero.module';
 import { HorarioAtencionModule } from './modules/horario_atencion/horario_atencion.module';
+import { AuthModule } from './auth/auth.module';
 import { LoginModule } from './auth/login/login.module';
 import { UserModule } from './auth/user/user.module';
 
@@ -22,6 +23,7 @@ import { UserModule } from './auth/user/user.module';
       retryAttempts: 5,
       retryDelay: 2000,
     }),
+    AuthModule,
     ClienteModule,
     CitasModule,
     BarbershopModule,

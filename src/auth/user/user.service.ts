@@ -4,6 +4,7 @@ import { ApiResponse } from 'src/core/interface/api-response';
 import { Repository } from 'typeorm';
 import { UserEntity } from './entity/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { hash } from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -13,20 +14,31 @@ export class UserService {
   ) {}
 
   async createUser(user: UserDto): Promise<ApiResponse> {
-    const newUser = this.userRepository.create(user);
+    const hashedPassword = await hash(user.password, 10);
+
+    const newUser = this.userRepository.create({
+      ...user,
+      password: hashedPassword,
+    });
+
     const result = await this.userRepository.save(newUser);
+
     if (result) {
       return {
         status: 'success',
         message: 'User created successfully',
-        data: result,
-      };
-    } else {
-      return {
-        status: 'error',
-        message: 'Failed to create user',
-        data: null,
+        data: {
+          id_user: result.id_user,
+          username: result.username,
+          id_bb: result.id_bb,
+        },
       };
     }
+
+    return {
+      status: 'error',
+      message: 'Failed to create user',
+      data: null,
+    };
   }
 }

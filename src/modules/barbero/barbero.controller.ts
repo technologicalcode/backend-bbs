@@ -10,5 +10,4 @@ export class BarberoController {
   createBarbero(@Body() barbero: CreateBarberoDto) {
     return this.barberoSrv.createBarbero(barbero);
   }
-  
 }
