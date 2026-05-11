@@ -7,7 +7,9 @@ import { BarberoModule } from './modules/barbero/barbero.module';
 import { HorarioAtencionModule } from './modules/horario_atencion/horario_atencion.module';
 import { AuthModule } from './auth/auth.module';
 import { LoginModule } from './auth/login/login.module';
+import { SessionModule } from './auth/session/session.module';
 import { UserModule } from './auth/user/user.module';
+import { RbacModule } from './modules/rbac/rbac.module';
 
 @Module({
   imports: [
@@ -19,17 +21,20 @@ import { UserModule } from './auth/user/user.module';
       password: process.env.DB_PASSWORD ?? 'postgres',
       database: process.env.DB_NAME ?? 'bbs',
       autoLoadEntities: true,
-      synchronize: false,
+      /** Crea/ajusta tablas desde las entidades. En producción usar migraciones y poner TYPEORM_SYNC=false */
+      synchronize: process.env.TYPEORM_SYNC !== 'false',
       retryAttempts: 5,
       retryDelay: 2000,
     }),
     AuthModule,
+    RbacModule,
     ClienteModule,
     CitasModule,
     BarbershopModule,
     BarberoModule,
     HorarioAtencionModule,
     LoginModule,
+    SessionModule,
     UserModule,
   ],
 })

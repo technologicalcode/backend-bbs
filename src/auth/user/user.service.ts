@@ -25,7 +25,7 @@ export class UserService {
 
     if (result) {
       return {
-        status: 'success',
+        status: true,
         message: 'User created successfully',
         data: {
           id_user: result.id_user,
@@ -36,7 +36,7 @@ export class UserService {
     }
 
     return {
-      status: 'error',
+      status: false,
       message: 'Failed to create user',
       data: null,
     };

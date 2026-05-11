@@ -4,7 +4,6 @@ import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto';
 
 @Public()
-
 @Controller('auth/users')
 export class UserController {
   constructor(private readonly userSrv: UserService) {}
