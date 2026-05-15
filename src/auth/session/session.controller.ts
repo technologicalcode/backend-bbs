@@ -1,15 +1,14 @@
-import { Controller, Get, Req } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import type { LoginPayload } from 'src/auth/login/interface/login.interface';
 import { SessionService } from './session.service';
-
-type RequestWithUser = { user: LoginPayload };
 
 @Controller('auth')
 export class SessionController {
   constructor(private readonly sessionService: SessionService) {}
 
   @Get('session')
-  getSession(@Req() req: RequestWithUser) {
-    return this.sessionService.getSession(req.user);
+  getSession(@CurrentUser() user: LoginPayload) {
+    return this.sessionService.getSession(user);
   }
 }

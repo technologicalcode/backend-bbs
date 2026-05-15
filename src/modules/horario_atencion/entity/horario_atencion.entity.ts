@@ -20,6 +20,9 @@ export class HorarioAtencionEntity {
   @Column({ name: 'estado_ha' })
   estado_ha: string;
 
-  @Column({ name: 'horas_ausencia', type: 'text' })
-  horas_ausencia: string;
+  @Column({ name: 'horas_ausencia_inicio', type: 'time', nullable: true })
+  horas_ausencia_inicio: string | null;
+
+  @Column({ name: 'horas_ausencia_fin', type: 'time', nullable: true })
+  horas_ausencia_fin: string | null;
 }
