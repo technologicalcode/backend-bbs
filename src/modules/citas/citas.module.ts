@@ -8,5 +8,6 @@ import { CitasEntity } from './entity/citas.entity';
   imports: [TypeOrmModule.forFeature([CitasEntity])],
   controllers: [CitasController],
   providers: [CitasService],
+  exports: [CitasService],
 })
 export class CitasModule {}

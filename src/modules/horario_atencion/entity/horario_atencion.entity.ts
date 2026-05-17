@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('horarios_atencion')
 export class HorarioAtencionEntity {
@@ -8,21 +14,30 @@ export class HorarioAtencionEntity {
   @Column({ name: 'id_bb' })
   id_bb: number;
 
-  @Column({ name: 'hora_inicio', type: 'time' })
-  hora_inicio: string;
+  @Column({ name: 'hora_inicio', type: 'time', nullable: true })
+  hora_inicio: string | null;
 
-  @Column({ name: 'hora_fin', type: 'time' })
-  hora_fin: string;
+  @Column({ name: 'hora_fin', type: 'time', nullable: true })
+  hora_fin: string | null;
 
   @Column({ name: 'fecha', type: 'date' })
   fecha: Date;
 
-  @Column({ name: 'estado_ha' })
-  estado_ha: string;
+  @Column({ name: 'estado_ha', type: 'int2', default: 1 })
+  estado_ha: number;
 
   @Column({ name: 'horas_ausencia_inicio', type: 'time', nullable: true })
   horas_ausencia_inicio: string | null;
 
   @Column({ name: 'horas_ausencia_fin', type: 'time', nullable: true })
   horas_ausencia_fin: string | null;
+
+  @Column({ name: 'tiempo_proceso', type: 'time', nullable: true })
+  tiempo_proceso: string | null;
+
+  @CreateDateColumn({ name: 'create_at', type: 'timestamp' })
+  createAt: Date;
+
+  @UpdateDateColumn({ name: 'update_at', type: 'timestamp' })
+  updateAt: Date;
 }
