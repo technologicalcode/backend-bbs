@@ -1,14 +1,17 @@
+# Postgres solo para desarrollo local.
+# Uso: npm run db:up  (equivale a docker compose --profile local up -d)
 services:
   postgres:
     image: postgres:16-alpine
     container_name: backend-bbs-db
+    profiles: [local]
     restart: unless-stopped
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - '5432:5432'
     environment:
-      POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
-      POSTGRES_DB: ${DB_NAME:-bbs}
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: bbs
     volumes:
       - backend-bbs-pgdata:/var/lib/postgresql/data
 
