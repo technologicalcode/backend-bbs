@@ -36,4 +36,9 @@ export class CitasService {
 
     await repo.save(payload);
   }
+
+  async CargarCitas(){
+    const citas = await this.citaRepository.find();
+    return citas;
+  }
 }
