@@ -1,12 +1,13 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { ApiResponse } from 'src/core/interface/api-response';
+import { CITA_GENERATOR, CITAS_WRITER } from 'src/core/tokens/injection.tokens';
+import type { ICitasWriter } from '../citas/interfaces/citas-writer.interface';
 import type { CreateHorarioAtencionDto } from './dto/horario_atencion.dto';
 import { HorarioAtencionEntity } from './entity/horario_atencion.entity';
-import { HORARIO_ATENCION_MESSAGES } from './interface/horario_atencion.messages';
-import { CitasService } from '../citas/citas.service';
-import { generarCitas } from './helper/horario_atecion.helper';
+import { HORARIO_ATENCION_MESSAGES } from './interfaces/horario_atencion.messages';
+import type { ICitaGenerator } from './interfaces/cita-generator.interface';
 
 @Injectable()
 export class HorarioAtencionService {
@@ -15,13 +16,16 @@ export class HorarioAtencionService {
   constructor(
     @InjectDataSource()
     private readonly dataSource: DataSource,
-    private readonly citasService: CitasService,
+    @Inject(CITA_GENERATOR)
+    private readonly citaGenerator: ICitaGenerator,
+    @Inject(CITAS_WRITER)
+    private readonly citasWriter: ICitasWriter,
   ) {}
 
   async createHorarioAtencion(
     dto: CreateHorarioAtencionDto[],
     idbb: number,
-  ): Promise<ApiResponse> {
+  ): Promise<ApiResponse<null>> {
     if (!dto?.length) {
       return {
         status: false,
@@ -45,14 +49,14 @@ export class HorarioAtencionService {
       await this.dataSource.transaction(async (manager) => {
         await manager.getRepository(HorarioAtencionEntity).save(registerData);
 
-        const listaCitas = generarCitas(horariosParaCitas);
+        const listaCitas = this.citaGenerator.generar(horariosParaCitas);
         if (listaCitas.length === 0) {
           this.logger.warn(
             'No se generaron citas: revisa hora_inicio, hora_fin y tiempo_proceso',
           );
         }
 
-        await this.citasService.createCita(listaCitas, manager);
+        await this.citasWriter.createCita(listaCitas, manager);
       });
 
       return {

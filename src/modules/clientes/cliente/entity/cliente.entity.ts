@@ -17,6 +17,6 @@ export class ClienteEntity {
   @Column({ name: 'num_documento' })
   num_documento: string;
 
-  @Column({ name: 'estado_cl' })
-  estado_cl: string;
+  @Column({ name: 'estado_cl',type: 'int2' })
+  estado_cl: number;
 }

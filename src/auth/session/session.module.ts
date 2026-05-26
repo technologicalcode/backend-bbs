@@ -7,6 +7,9 @@ import { UsuarioRolEntity } from 'src/modules/rbac/entity/usuario-rol.entity';
 import { MenuItemEntity } from 'src/modules/rbac/entity/menu-item.entity';
 import { SessionController } from './session.controller';
 import { SessionService } from './session.service';
+import { SessionUserService } from './services/session-user.service';
+import { SessionAuthorizationService } from './services/session-authorization.service';
+import { SessionMenuService } from './services/session-menu.service';
 
 @Module({
   imports: [
@@ -19,6 +22,11 @@ import { SessionService } from './session.service';
     ]),
   ],
   controllers: [SessionController],
-  providers: [SessionService],
+  providers: [
+    SessionService,
+    SessionUserService,
+    SessionAuthorizationService,
+    SessionMenuService,
+  ],
 })
 export class SessionModule {}

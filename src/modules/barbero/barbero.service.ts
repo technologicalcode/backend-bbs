@@ -12,6 +12,7 @@ export class BarberoService {
   ) {}
 
   async createBarbero(barbero: CreateBarberoDto) {
+    console.log(barbero);
     const newBarbero = this.barberoRepository.create(barbero);
     return this.barberoRepository.save(newBarbero);
   }

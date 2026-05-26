@@ -1,5 +1,5 @@
-import { CitaGenerada } from 'src/modules/citas/interface/citas.interface';
-import type { estructuraHorarioAtencion } from '../interface/horario_atencion.interface';
+import { CitaGenerada } from 'src/modules/citas/interfaces/citas.interface';
+import type { estructuraHorarioAtencion } from '../interfaces/horario_atencion.interface';
 
 /** Cita/slot generado a partir del tiempo disponible del horario. */
 

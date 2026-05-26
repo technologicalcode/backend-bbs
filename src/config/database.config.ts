@@ -1,8 +1,7 @@
 import type { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 /** URL por defecto cuando Postgres corre con Docker en local (`npm run db:up`). */
-const LOCAL_DATABASE_URL =
-  'postgresql://postgres:postgres@127.0.0.1:5432/bbs';
+const LOCAL_DATABASE_URL = 'postgresql://postgres:postgres@127.0.0.1:5432/bbs';
 
 export function getTypeOrmConfig(): TypeOrmModuleOptions {
   const databaseUrl =

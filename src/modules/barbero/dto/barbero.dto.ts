@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateBarberoDto {
   @IsString()
@@ -20,6 +20,6 @@ export class CreateBarberoDto {
 
   @Type(() => Number)
   @IsNumber()
-  @IsNotEmpty()
-  id_bbs: number;
+  @IsOptional()
+  id_bbs?: number;
 }

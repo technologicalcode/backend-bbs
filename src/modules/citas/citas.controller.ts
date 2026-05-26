@@ -1,16 +1,14 @@
 import { Controller, Get } from '@nestjs/common';
-import { CitasService } from './citas.service';
 import { Public } from 'src/auth/decorators/public.decorator';
+import { CitasService } from './citas.service';
 
 @Controller('citas')
 export class CitasController {
-    constructor(private readonly citasService: CitasService) {
+  constructor(private readonly citasService: CitasService) {}
 
-    }
-
-    @Public()
-    @Get('cargar-citas')
-    async cargarCitas(){
-        return this.citasService.CargarCitas();
-    }
+  @Public()
+  @Get('cargar-citas')
+  cargarCitas() {
+    return this.citasService.cargarCitas();
+  }
 }

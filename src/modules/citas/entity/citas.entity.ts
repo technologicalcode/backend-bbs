@@ -20,6 +20,11 @@ export class CitasEntity {
   @Column({ name: 'fecha_cita', type: 'date' })
   fecha_cita: Date;
 
-  @Column({ name: 'estado_cita' })
-  estado_cita: string;
+  /**
+   * Estado de la cita:
+   * 1 = disponible
+   * 2 = ocupado (ya no está disponible)
+   */
+  @Column({ name: 'estado_cita', type: 'int2', default: 1 })
+  estado_cita: number;
 }

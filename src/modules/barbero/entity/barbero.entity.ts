@@ -17,6 +17,6 @@ export class BarberoEntity {
   @Column({ name: 'alias' })
   alias: string;
 
-  @Column({ name: 'id_bbs' })
+  @Column({ name: 'id_bbs', nullable: true })
   id_bbs: number;
 }
