@@ -8,5 +8,6 @@ import { BarberoEntity } from './entity/barbero.entity';
   imports: [TypeOrmModule.forFeature([BarberoEntity])],
   controllers: [BarberoController],
   providers: [BarberoService],
+  exports: [BarberoService],
 })
 export class BarberoModule {}

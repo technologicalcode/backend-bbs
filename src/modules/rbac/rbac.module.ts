@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserEntity } from '../../auth/user/entity/user.entity';
+import { UsuarioCredencialesEntity } from '../usuarios/entity/usuario-credenciales.entity';
 import { RolEntity } from './entity/rol.entity';
 import { PermisoEntity } from './entity/permiso.entity';
 import { RolPermisoEntity } from './entity/rol-permiso.entity';
@@ -22,7 +22,7 @@ import { MenuAdminService } from './services/menu-admin.service';
       RolPermisoEntity,
       UsuarioRolEntity,
       MenuItemEntity,
-      UserEntity,
+      UsuarioCredencialesEntity,
     ]),
   ],
   controllers: [RbacAdminController],

@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ApiResponse } from 'src/core/interface/api-response';
-import { UserEntity } from 'src/auth/user/entity/user.entity';
+import { UsuarioCredencialesEntity } from 'src/modules/usuarios/entity/usuario-credenciales.entity';
 import { RolEntity } from '../entity/rol.entity';
 import { UsuarioRolEntity } from '../entity/usuario-rol.entity';
 import { CreateUsuarioRolDto } from '../dto/create-usuario-rol.dto';
@@ -14,8 +14,8 @@ import { CreateUsuarioRolDto } from '../dto/create-usuario-rol.dto';
 @Injectable()
 export class UsuarioRolAdminService {
   constructor(
-    @InjectRepository(UserEntity)
-    private readonly userRepo: Repository<UserEntity>,
+    @InjectRepository(UsuarioCredencialesEntity)
+    private readonly credencialesRepo: Repository<UsuarioCredencialesEntity>,
     @InjectRepository(RolEntity)
     private readonly rolRepo: Repository<RolEntity>,
     @InjectRepository(UsuarioRolEntity)
@@ -25,12 +25,12 @@ export class UsuarioRolAdminService {
   async createUsuarioRol(
     dto: CreateUsuarioRolDto,
   ): Promise<ApiResponse<UsuarioRolEntity>> {
-    const usuario = await this.userRepo.findOne({
-      where: { id_user: dto.id_user },
+    const usuario = await this.credencialesRepo.findOne({
+      where: { id_usuario_credencial: dto.id_user },
     });
     if (!usuario) {
       throw new NotFoundException(
-        `Usuario id_user=${dto.id_user} no encontrado`,
+        `Credencial id_user=${dto.id_user} no encontrada`,
       );
     }
     const rol = await this.rolRepo.findOne({ where: { id_rol: dto.id_rol } });
@@ -38,7 +38,10 @@ export class UsuarioRolAdminService {
       throw new NotFoundException(`Rol id_rol=${dto.id_rol} no encontrado`);
     }
     const dup = await this.usuarioRolRepo.findOne({
-      where: { usuario: { id_user: dto.id_user }, rol: { id_rol: dto.id_rol } },
+      where: {
+        usuario: { id_usuario_credencial: dto.id_user },
+        rol: { id_rol: dto.id_rol },
+      },
     });
     if (dup) {
       throw new ConflictException('Ese usuario ya tiene ese rol');

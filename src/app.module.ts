@@ -9,8 +9,9 @@ import { HorarioAtencionModule } from './modules/horario_atencion/horario_atenci
 import { AuthModule } from './auth/auth.module';
 import { LoginModule } from './auth/login/login.module';
 import { SessionModule } from './auth/session/session.module';
-import { UserModule } from './auth/user/user.module';
+import { UsuariosModule } from './modules/usuarios/usuarios.module';
 import { RbacModule } from './modules/rbac/rbac.module';
+import { NegocioModule } from './modules/negocio/negocio.module';
 
 @Module({
   imports: [
@@ -22,9 +23,10 @@ import { RbacModule } from './modules/rbac/rbac.module';
     BarbershopModule,
     BarberoModule,
     HorarioAtencionModule,
+    NegocioModule,
     LoginModule,
     SessionModule,
-    UserModule,
+    UsuariosModule,
   ],
 })
 export class AppModule {}

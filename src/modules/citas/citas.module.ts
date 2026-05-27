@@ -4,12 +4,15 @@ import { CITAS_WRITER } from 'src/core/tokens/injection.tokens';
 import { CitasController } from './citas.controller';
 import { CitasService } from './citas.service';
 import { CitasEntity } from './entity/citas.entity';
+import { CitaHelper } from './helper/citas.helper';
+import { BarberoModule } from '../barbero/barbero.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CitasEntity])],
+  imports: [TypeOrmModule.forFeature([CitasEntity]), BarberoModule],
   controllers: [CitasController],
   providers: [
     CitasService,
+    CitaHelper,
     { provide: CITAS_WRITER, useExisting: CitasService },
   ],
   exports: [CitasService, CITAS_WRITER],

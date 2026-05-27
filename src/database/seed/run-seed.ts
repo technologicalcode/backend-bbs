@@ -7,20 +7,28 @@ import {
   barbershops,
   citas,
   clientes,
+  credenciales,
   horariosAtencion,
   menuItems,
+  negocios,
   permisos,
   rolPermisoCodigos,
   roles,
-  users,
+  tiposNegocio,
+  tiposUsuario,
+  usuarios,
 } from './seed.data';
+import { TipoNegocioEntity } from '../../modules/negocio/tipo-negocio/entity/tipo-negocio.entity';
+import { NegocioEntity } from '../../modules/negocio/entity/negocio.entity';
+import { TipoUsuariosEntity } from '../../modules/usuarios/entity/tipo-usuarios.entity';
+import { UsuariosEntity } from '../../modules/usuarios/entity/usuarios.entity';
+import { UsuarioCredencialesEntity } from '../../modules/usuarios/entity/usuario-credenciales.entity';
 import { BarbershopEntity } from '../../modules/barbershop/entity/barbershop.entity';
 import { BarberoEntity } from '../../modules/barbero/entity/barbero.entity';
 import { PermisoEntity } from '../../modules/rbac/entity/permiso.entity';
 import { RolEntity } from '../../modules/rbac/entity/rol.entity';
 import { RolPermisoEntity } from '../../modules/rbac/entity/rol-permiso.entity';
 import { MenuItemEntity } from '../../modules/rbac/entity/menu-item.entity';
-import { UserEntity } from '../../auth/user/entity/user.entity';
 import { UsuarioRolEntity } from '../../modules/rbac/entity/usuario-rol.entity';
 import { ClienteEntity } from '../../modules/clientes/cliente/entity/cliente.entity';
 import { HorarioAtencionEntity } from '../../modules/horario_atencion/entity/horario_atencion.entity';
@@ -37,43 +45,134 @@ function assertSafeToRun(): void {
   }
 }
 
-async function clearTables(): Promise<void> {
-  const ds = createSeedDataSource();
-  await ds.initialize();
-  try {
-    await ds.query(`
-      TRUNCATE TABLE
-        citas,
-        horarios_atencion,
-        usuario_rol,
-        rol_permiso,
-        menu,
-        users,
-        clientes,
-        barbero,
-        permiso,
-        rol,
-        barbershop
-      RESTART IDENTITY CASCADE
-    `);
-    console.log('Tablas vaciadas (RESTART IDENTITY).');
-  } finally {
-    await ds.destroy();
+const SEED_TABLES_ORDER = [
+  'citas',
+  'horarios_atencion',
+  'usuario_rol',
+  'rol_permiso',
+  'menu',
+  'usuario_credenciales',
+  'users',
+  'usuarios',
+  'negocio',
+  'tipo_negocio',
+  'tipo_usuarios',
+  'clientes',
+  'barbero',
+  'permiso',
+  'rol',
+  'barbershop',
+];
+
+async function clearTables(ds: Awaited<ReturnType<typeof createSeedDataSource>>): Promise<void> {
+  const rows: { tablename: string }[] = await ds.query(
+    `SELECT tablename FROM pg_tables
+     WHERE schemaname = 'public' AND tablename = ANY($1)`,
+    [SEED_TABLES_ORDER],
+  );
+  const existing = SEED_TABLES_ORDER.filter((t) =>
+    rows.some((r) => r.tablename === t),
+  );
+  if (existing.length === 0) {
+    console.log('No hay tablas que vaciar.');
+    return;
   }
+  await ds.query(
+    `TRUNCATE TABLE ${existing.join(', ')} RESTART IDENTITY CASCADE`,
+  );
+  console.log(`Tablas vaciadas: ${existing.join(', ')}`);
 }
 
 async function runSeed(): Promise<void> {
   assertSafeToRun();
 
-  if (process.env.SEED_CLEAR !== 'false') {
-    await clearTables();
-  }
-
   const dataSource = createSeedDataSource();
   await dataSource.initialize();
 
+  if (process.env.SEED_CLEAR !== 'false') {
+    await clearTables(dataSource);
+  }
+
+  await dataSource.synchronize();
+  console.log('Esquema sincronizado.');
+
   try {
     const passwordHash = await hash(SEED_PASSWORD_PLAIN, 10);
+
+    const tipoNegocioRepo = dataSource.getRepository(TipoNegocioEntity);
+    const savedTiposNegocio = await tipoNegocioRepo.save(
+      tipoNegocioRepo.create(
+        tiposNegocio.map((t) => ({ descripcion: t.descripcion })),
+      ),
+    );
+    const tipoNegocioByKey = new Map(
+      tiposNegocio.map((t, i) => [t.key, savedTiposNegocio[i]]),
+    );
+    console.log(`Tipos de negocio: ${savedTiposNegocio.length} registro(s)`);
+
+    const negocioRepo = dataSource.getRepository(NegocioEntity);
+    const savedNegocios: NegocioEntity[] = [];
+    for (const n of negocios) {
+      const tipo = tipoNegocioByKey.get(n.tipoNegocioKey);
+      if (!tipo) continue;
+      savedNegocios.push(
+        await negocioRepo.save(
+          negocioRepo.create({
+            descripcion: n.descripcion,
+            ruc: n.ruc,
+            direccion: n.direccion,
+            telefono: n.telefono,
+            correo: n.correo,
+            id_tipo_negocio: tipo.id_tipo_negocio,
+            encargado_negocio: 1,
+          }),
+        ),
+      );
+    }
+    const negocioByKey = new Map(
+      negocios.map((n, i) => [n.key, savedNegocios[i]]),
+    );
+    console.log(`Negocios: ${savedNegocios.length} registro(s)`);
+
+    const tipoUsuarioRepo = dataSource.getRepository(TipoUsuariosEntity);
+    const savedTiposUsuario = await tipoUsuarioRepo.save(
+      tipoUsuarioRepo.create(
+        tiposUsuario.map((t) => ({ descripcion: t.descripcion })),
+      ),
+    );
+    const tipoUsuarioByKey = new Map(
+      tiposUsuario.map((t, i) => [t.key, savedTiposUsuario[i]]),
+    );
+    console.log(`Tipos de usuario: ${savedTiposUsuario.length} registro(s)`);
+
+    const usuariosRepo = dataSource.getRepository(UsuariosEntity);
+    const usuarioByKey = new Map<string, UsuariosEntity>();
+    for (const u of usuarios) {
+      const tipo = tipoUsuarioByKey.get(u.tipoUsuarioKey);
+      const negocio = negocioByKey.get(u.negocioKey);
+      if (!tipo || !negocio) continue;
+      const saved = await usuariosRepo.save(
+        usuariosRepo.create({
+          nombre: u.nombre,
+          apellido: u.apellido,
+          email: u.email,
+          telefono: u.telefono,
+          id_tipo_usuario: tipo.id_tipo_usuario,
+          id_negocio: negocio.id_negocio,
+        }),
+      );
+      usuarioByKey.set(u.key, saved);
+    }
+    console.log(`Usuarios: ${usuarioByKey.size} registro(s)`);
+
+    for (const n of negocios) {
+      const negocio = negocioByKey.get(n.key);
+      const encargado = usuarioByKey.get(n.encargadoKey);
+      if (!negocio || !encargado) continue;
+      negocio.encargado_negocio = encargado.id_usuario;
+      await negocioRepo.save(negocio);
+    }
+    console.log('Encargados de negocio actualizados.');
 
     const bbsRepo = dataSource.getRepository(BarbershopEntity);
     const savedBbs = await bbsRepo.save(bbsRepo.create(barbershops));
@@ -124,25 +223,30 @@ async function runSeed(): Promise<void> {
     await menuRepo.save(menuRows);
     console.log(`Menú: ${menuRows.length} registro(s)`);
 
-    const userRepo = dataSource.getRepository(UserEntity);
+    const credencialesRepo = dataSource.getRepository(UsuarioCredencialesEntity);
     const usuarioRolRepo = dataSource.getRepository(UsuarioRolEntity);
-    for (const u of users) {
-      const user = await userRepo.save(
-        userRepo.create({
-          username: u.username,
+    for (const c of credenciales) {
+      const usuario = usuarioByKey.get(c.usuarioKey);
+      if (!usuario) {
+        console.warn(`Credencial ${c.username}: usuario "${c.usuarioKey}" no encontrado`);
+        continue;
+      }
+      const credencial = await credencialesRepo.save(
+        credencialesRepo.create({
+          username: c.username,
           password: passwordHash,
-          id_bb: u.id_bb,
+          id_usuario: usuario.id_usuario,
         }),
       );
-      const rol = rolByCodigo.get(u.rolCodigo);
+      const rol = rolByCodigo.get(c.rolCodigo);
       if (rol) {
         await usuarioRolRepo.save(
-          usuarioRolRepo.create({ usuario: user, rol }),
+          usuarioRolRepo.create({ usuario: credencial, rol }),
         );
       }
     }
     console.log(
-      `Usuarios: ${users.length} (contraseña: ${SEED_PASSWORD_PLAIN})`,
+      `Credenciales: ${credenciales.length} (contraseña: ${SEED_PASSWORD_PLAIN})`,
     );
 
     const clienteRepo = dataSource.getRepository(ClienteEntity);
@@ -172,7 +276,10 @@ async function runSeed(): Promise<void> {
     console.log(`Citas: ${citaRows.length} registro(s)`);
 
     console.log('\nSemilla completada.');
-    console.log('Login de prueba: admin / barbero1 / barbero2');
+    console.log('Logins de prueba:');
+    for (const c of credenciales) {
+      console.log(`  - ${c.username} (${c.rolCodigo})`);
+    }
     console.log(`Contraseña: ${SEED_PASSWORD_PLAIN}`);
   } finally {
     await dataSource.destroy();

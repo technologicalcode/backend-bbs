@@ -17,3 +17,4 @@ export class BarberoService {
     return this.barberoRepository.save(newBarbero);
   }
 }
+

@@ -26,7 +26,7 @@ export class SessionAuthorizationService {
     allowedPermisoIds: Set<number>;
   }> {
     const usuarioRoles = await this.usuarioRolRepo.find({
-      where: { usuario: { id_user: idUser } },
+      where: { usuario: { id_usuario_credencial: idUser } },
       relations: ['rol'],
     });
 
