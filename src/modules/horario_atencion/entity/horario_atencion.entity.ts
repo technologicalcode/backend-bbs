@@ -11,8 +11,8 @@ export class HorarioAtencionEntity {
   @PrimaryGeneratedColumn({ name: 'id_horario_atencion' })
   id_horario_atencion: number;
 
-  @Column({ name: 'id_bb' })
-  id_bb: number;
+  @Column({ name: 'id_usuario' })
+  id_usuario: number;
 
   @Column({ name: 'hora_inicio', type: 'time', nullable: true })
   hora_inicio: string | null;

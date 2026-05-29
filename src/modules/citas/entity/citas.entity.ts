@@ -8,8 +8,8 @@ export class CitasEntity {
   @Column({ name: 'id_cliente', type: 'int', nullable: true })
   id_cliente: number | null;
 
-  @Column({ name: 'id_bb' })
-  id_bb: number;
+  @Column({ name: 'id_usuario' })
+  id_usuario: number;
 
   @Column({ name: 'hora_cita_inicio', type: 'time' })
   hora_cita_inicio: string;

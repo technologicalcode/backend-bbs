@@ -5,10 +5,10 @@ import { CitasController } from './citas.controller';
 import { CitasService } from './citas.service';
 import { CitasEntity } from './entity/citas.entity';
 import { CitaHelper } from './helper/citas.helper';
-import { BarberoModule } from '../barbero/barbero.module';
+import { UsuariosModule } from '../usuarios/usuarios.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CitasEntity]), BarberoModule],
+  imports: [TypeOrmModule.forFeature([CitasEntity]), UsuariosModule],
   controllers: [CitasController],
   providers: [
     CitasService,

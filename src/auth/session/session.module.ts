@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { BarberoEntity } from 'src/modules/barbero/entity/barbero.entity';
 import { UsuarioCredencialesEntity } from 'src/modules/usuarios/entity/usuario-credenciales.entity';
 import { UsuariosEntity } from 'src/modules/usuarios/entity/usuarios.entity';
 import { PermisoEntity } from 'src/modules/rbac/entity/permiso.entity';
@@ -18,7 +17,6 @@ import { SessionMenuService } from './services/session-menu.service';
     TypeOrmModule.forFeature([
       UsuarioCredencialesEntity,
       UsuariosEntity,
-      BarberoEntity,
       PermisoEntity,
       RolPermisoEntity,
       UsuarioRolEntity,

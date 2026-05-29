@@ -113,47 +113,6 @@ export const credenciales = [
   { username: 'admin.spa', usuarioKey: 'admin-spa', rolCodigo: 'ADMIN' },
 ];
 
-export const barbershops = [
-  {
-    razon_social: 'Barbería BBS Centro',
-    ubicacion: 'Av. Principal 123',
-    ruc: '20123456789',
-    cel_contacto: '999111222',
-    correo: 'centro@bbs.local',
-  },
-  {
-    razon_social: 'Barbería BBS Norte',
-    ubicacion: 'Jr. Los Olivos 456',
-    ruc: '20987654321',
-    cel_contacto: '988777666',
-    correo: 'norte@bbs.local',
-  },
-];
-
-export const barberos = [
-  {
-    nombre: 'Carlos',
-    apellido: 'Mendoza',
-    dni: '12345678',
-    alias: 'carlos_cut',
-    id_bbs: 1,
-  },
-  {
-    nombre: 'Luis',
-    apellido: 'Torres',
-    dni: '87654321',
-    alias: 'luis_fade',
-    id_bbs: 1,
-  },
-  {
-    nombre: 'Miguel',
-    apellido: 'Soto',
-    dni: '11223344',
-    alias: 'miguel_pro',
-    id_bbs: 2,
-  },
-];
-
 export const permisos = [
   { codigo: 'RESERVAS_VER', nombre: 'Ver reservas' },
   { codigo: 'RESERVAS_EDITAR', nombre: 'Editar reservas' },
@@ -225,7 +184,7 @@ export const clientes = [
 
 export const horariosAtencion = [
   {
-    id_bb: 1,
+    usuarioKey: 'barbero1',
     fecha: '2026-05-20',
     hora_inicio: '09:00:00',
     hora_fin: '18:00:00',
@@ -235,7 +194,7 @@ export const horariosAtencion = [
     estado_ha: 1,
   },
   {
-    id_bb: 2,
+    usuarioKey: 'barbero2',
     fecha: '2026-05-20',
     hora_inicio: '10:00:00',
     hora_fin: '14:00:00',
@@ -245,7 +204,7 @@ export const horariosAtencion = [
     estado_ha: 1,
   },
   {
-    id_bb: 3,
+    usuarioKey: 'barbero-norte',
     fecha: '2026-05-21',
     hora_inicio: '11:00:00',
     hora_fin: '19:00:00',
@@ -259,7 +218,7 @@ export const horariosAtencion = [
 /** Citas de ejemplo (algunas disponibles, una ocupada con cliente) */
 export const citas = [
   {
-    id_bb: 1,
+    usuarioKey: 'barbero1',
     id_cliente: null,
     fecha_cita: '2026-05-20',
     hora_cita_inicio: '09:00:00',
@@ -267,7 +226,7 @@ export const citas = [
     estado_cita: 1,
   },
   {
-    id_bb: 1,
+    usuarioKey: 'barbero1',
     id_cliente: null,
     fecha_cita: '2026-05-20',
     hora_cita_inicio: '09:30:00',
@@ -275,7 +234,7 @@ export const citas = [
     estado_cita: 1,
   },
   {
-    id_bb: 1,
+    usuarioKey: 'barbero1',
     id_cliente: 1,
     fecha_cita: '2026-05-20',
     hora_cita_inicio: '10:00:00',
@@ -283,7 +242,7 @@ export const citas = [
     estado_cita: 2,
   },
   {
-    id_bb: 2,
+    usuarioKey: 'barbero2',
     id_cliente: null,
     fecha_cita: '2026-05-20',
     hora_cita_inicio: '10:00:00',
@@ -291,7 +250,7 @@ export const citas = [
     estado_cita: 1,
   },
   {
-    id_bb: 3,
+    usuarioKey: 'barbero-norte',
     id_cliente: 2,
     fecha_cita: '2026-05-21',
     hora_cita_inicio: '11:00:00',

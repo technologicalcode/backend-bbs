@@ -1,5 +1,5 @@
 export interface estructuraHorarioAtencion {
-  id_bb: number;
+  id_usuario: number;
   hora_inicio?: string | null;
   hora_fin?: string | null;
   fecha: string;

@@ -17,9 +17,9 @@ function isRefreshPayload(v: unknown): v is RefreshTokenPayload {
   const o = v as Record<string, unknown>;
   return (
     o.typ === 'refresh' &&
-    typeof o.id_user === 'number' &&
+    typeof o.id_usuario_credencial === 'number' &&
     typeof o.username === 'string' &&
-    typeof o.id_bb === 'number'
+    typeof o.id_usuario === 'number'
   );
 }
 
@@ -61,9 +61,9 @@ export class TokenIssuerService {
     }
 
     const payload: LoginPayload = {
-      id_user: decoded.id_user,
+      id_usuario_credencial: decoded.id_usuario_credencial,
       username: decoded.username,
-      id_bb: decoded.id_bb,
+      id_usuario: decoded.id_usuario,
     };
 
     const tokens = await this.issueForUser(payload);

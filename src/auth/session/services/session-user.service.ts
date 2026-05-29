@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { BarberoEntity } from 'src/modules/barbero/entity/barbero.entity';
 import { UsuarioCredencialesEntity } from 'src/modules/usuarios/entity/usuario-credenciales.entity';
 import { UsuariosEntity } from 'src/modules/usuarios/entity/usuarios.entity';
 import { toLoginPayload } from 'src/modules/usuarios/usuario-credenciales/helper/credencial-login.helper';
@@ -12,8 +11,6 @@ export class SessionUserService {
   constructor(
     @InjectRepository(UsuarioCredencialesEntity)
     private readonly credencialesRepo: Repository<UsuarioCredencialesEntity>,
-    @InjectRepository(BarberoEntity)
-    private readonly barberoRepo: Repository<BarberoEntity>,
     @InjectRepository(UsuariosEntity)
     private readonly usuariosRepo: Repository<UsuariosEntity>,
   ) {}
@@ -28,6 +25,6 @@ export class SessionUserService {
       throw new NotFoundException('Usuario no encontrado');
     }
 
-    return toLoginPayload(credencial, this.barberoRepo, this.usuariosRepo);
+    return toLoginPayload(credencial, this.usuariosRepo);
   }
 }

@@ -5,8 +5,6 @@ import { UsuariosEntity } from '../../modules/usuarios/entity/usuarios.entity';
 import { TipoUsuariosEntity } from '../../modules/usuarios/entity/tipo-usuarios.entity';
 import { NegocioEntity } from '../../modules/negocio/entity/negocio.entity';
 import { TipoNegocioEntity } from '../../modules/negocio/tipo-negocio/entity/tipo-negocio.entity';
-import { BarberoEntity } from '../../modules/barbero/entity/barbero.entity';
-import { BarbershopEntity } from '../../modules/barbershop/entity/barbershop.entity';
 import { ClienteEntity } from '../../modules/clientes/cliente/entity/cliente.entity';
 import { RolEntity } from '../../modules/rbac/entity/rol.entity';
 import { PermisoEntity } from '../../modules/rbac/entity/permiso.entity';
@@ -36,8 +34,6 @@ export function createSeedDataSource(): DataSource {
       TipoUsuariosEntity,
       UsuariosEntity,
       UsuarioCredencialesEntity,
-      BarbershopEntity,
-      BarberoEntity,
       ClienteEntity,
       RolEntity,
       PermisoEntity,

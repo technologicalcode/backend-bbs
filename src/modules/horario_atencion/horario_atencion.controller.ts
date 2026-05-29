@@ -14,7 +14,6 @@ export class HorarioAtencionController {
     dto: CreateHorarioAtencionDto[],
     @CurrentUser() user: LoginPayload,
   ) {
-    const idbb = user.id_bb;
-    return this.horarioSrv.createHorarioAtencion(dto, idbb);
+    return this.horarioSrv.createHorarioAtencion(dto, user.id_usuario);
   }
 }

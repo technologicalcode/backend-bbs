@@ -24,7 +24,7 @@ export class HorarioAtencionService {
 
   async createHorarioAtencion(
     dto: CreateHorarioAtencionDto[],
-    idbb: number,
+    idUsuario: number,
   ): Promise<ApiResponse<null>> {
     if (!dto?.length) {
       return {
@@ -37,12 +37,12 @@ export class HorarioAtencionService {
     const registerData = dto.map((item) => ({
       ...item,
       fecha: new Date(item.fecha),
-      id_bb: idbb,
+      id_usuario: idUsuario,
     }));
 
     const horariosParaCitas = dto.map((item) => ({
       ...item,
-      id_bb: idbb,
+      id_usuario: idUsuario,
     }));
 
     try {

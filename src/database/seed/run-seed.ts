@@ -3,8 +3,6 @@ import { hash } from 'bcrypt';
 import { createSeedDataSource } from './data-source.seed';
 import {
   SEED_PASSWORD_PLAIN,
-  barberos,
-  barbershops,
   citas,
   clientes,
   credenciales,
@@ -23,8 +21,6 @@ import { NegocioEntity } from '../../modules/negocio/entity/negocio.entity';
 import { TipoUsuariosEntity } from '../../modules/usuarios/entity/tipo-usuarios.entity';
 import { UsuariosEntity } from '../../modules/usuarios/entity/usuarios.entity';
 import { UsuarioCredencialesEntity } from '../../modules/usuarios/entity/usuario-credenciales.entity';
-import { BarbershopEntity } from '../../modules/barbershop/entity/barbershop.entity';
-import { BarberoEntity } from '../../modules/barbero/entity/barbero.entity';
 import { PermisoEntity } from '../../modules/rbac/entity/permiso.entity';
 import { RolEntity } from '../../modules/rbac/entity/rol.entity';
 import { RolPermisoEntity } from '../../modules/rbac/entity/rol-permiso.entity';
@@ -58,10 +54,8 @@ const SEED_TABLES_ORDER = [
   'tipo_negocio',
   'tipo_usuarios',
   'clientes',
-  'barbero',
   'permiso',
   'rol',
-  'barbershop',
 ];
 
 async function clearTables(ds: Awaited<ReturnType<typeof createSeedDataSource>>): Promise<void> {
@@ -174,14 +168,6 @@ async function runSeed(): Promise<void> {
     }
     console.log('Encargados de negocio actualizados.');
 
-    const bbsRepo = dataSource.getRepository(BarbershopEntity);
-    const savedBbs = await bbsRepo.save(bbsRepo.create(barbershops));
-    console.log(`Barbershop: ${savedBbs.length} registro(s)`);
-
-    const bbRepo = dataSource.getRepository(BarberoEntity);
-    const savedBb = await bbRepo.save(bbRepo.create(barberos));
-    console.log(`Barberos: ${savedBb.length} registro(s)`);
-
     const permisoRepo = dataSource.getRepository(PermisoEntity);
     const savedPermisos = await permisoRepo.save(permisoRepo.create(permisos));
     const permisoByCodigo = new Map(savedPermisos.map((p) => [p.codigo, p]));
@@ -254,24 +240,40 @@ async function runSeed(): Promise<void> {
     console.log(`Clientes: ${clientes.length} registro(s)`);
 
     const horarioRepo = dataSource.getRepository(HorarioAtencionEntity);
-    const horarioRows = horariosAtencion.map((h) =>
-      horarioRepo.create({
-        ...h,
-        fecha: new Date(h.fecha),
-        horas_ausencia_inicio: h.horas_ausencia_inicio,
-        horas_ausencia_fin: h.horas_ausencia_fin,
-      }),
-    );
+    const horarioRows = horariosAtencion.flatMap((h) => {
+      const usuario = usuarioByKey.get(h.usuarioKey);
+      if (!usuario) return [];
+      return [
+        horarioRepo.create({
+          id_usuario: usuario.id_usuario,
+          fecha: new Date(h.fecha),
+          hora_inicio: h.hora_inicio,
+          hora_fin: h.hora_fin,
+          horas_ausencia_inicio: h.horas_ausencia_inicio,
+          horas_ausencia_fin: h.horas_ausencia_fin,
+          tiempo_proceso: h.tiempo_proceso,
+          estado_ha: h.estado_ha,
+        }),
+      ];
+    });
     await horarioRepo.save(horarioRows);
     console.log(`Horarios atención: ${horarioRows.length} registro(s)`);
 
     const citaRepo = dataSource.getRepository(CitasEntity);
-    const citaRows = citas.map((c) =>
-      citaRepo.create({
-        ...c,
-        fecha_cita: new Date(c.fecha_cita),
-      }),
-    );
+    const citaRows = citas.flatMap((c) => {
+      const usuario = usuarioByKey.get(c.usuarioKey);
+      if (!usuario) return [];
+      return [
+        citaRepo.create({
+          id_usuario: usuario.id_usuario,
+          id_cliente: c.id_cliente,
+          fecha_cita: new Date(c.fecha_cita),
+          hora_cita_inicio: c.hora_cita_inicio,
+          hora_cita_fin: c.hora_cita_fin,
+          estado_cita: c.estado_cita,
+        }),
+      ];
+    });
     await citaRepo.save(citaRows);
     console.log(`Citas: ${citaRows.length} registro(s)`);
 

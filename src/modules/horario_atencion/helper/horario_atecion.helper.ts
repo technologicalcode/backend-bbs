@@ -84,7 +84,7 @@ export function generarCitas(
   const citas: CitaGenerada[] = [];
 
   for (const horario of horarios) {
-    const { hora_inicio, hora_fin, tiempo_proceso, fecha, id_bb } = horario;
+    const { hora_inicio, hora_fin, tiempo_proceso, fecha, id_usuario } = horario;
 
     if (
       hora_inicio == null ||
@@ -114,7 +114,7 @@ export function generarCitas(
       const slots = slotsEnIntervalo(tramo, duracionMin);
       for (const slot of slots) {
         citas.push({
-          id_bb,
+          id_usuario,
           fecha,
           hora_cita_inicio: minutesToTime(slot.inicio),
           hora_cita_fin: minutesToTime(slot.fin),
