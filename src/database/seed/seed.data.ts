@@ -114,17 +114,22 @@ export const credenciales = [
 ];
 
 export const permisos = [
-  { codigo: 'RESERVAS_VER', nombre: 'Ver reservas' },
-  { codigo: 'RESERVAS_EDITAR', nombre: 'Editar reservas' },
-  { codigo: 'CLIENTES_VER', nombre: 'Ver clientes' },
-  { codigo: 'CLIENTES_EDITAR', nombre: 'Editar clientes' },
-  { codigo: 'DASHBOARD_VER', nombre: 'Ver dashboard' },
-  { codigo: 'ALL', nombre: 'Acceso total' },
+  { codigo: 'RESERVAS_VER', descripcion: 'Ver reservas', modulo: 'reservas' },
+  { codigo: 'RESERVAS_EDITAR', descripcion: 'Editar reservas', modulo: 'reservas' },
+  { codigo: 'CLIENTES_VER', descripcion: 'Ver clientes', modulo: 'clientes' },
+  { codigo: 'CLIENTES_EDITAR', descripcion: 'Editar clientes', modulo: 'clientes' },
+  { codigo: 'DASHBOARD_VER', descripcion: 'Ver dashboard', modulo: 'dashboard' },
+  { codigo: 'ALL', descripcion: 'Acceso total', modulo: 'sistema' },
 ];
 
 export const roles = [
-  { codigo: 'ADMIN', nombre: 'Administrador' },
-  { codigo: 'BB', nombre: 'Barbero' },
+  { codigo: 'ADMIN', descripcion: 'Administrador' },
+  { codigo: 'BB', descripcion: 'Barbero' },
+];
+
+export const padresMenu = [
+  { key: 'principal', descripcion: 'Principal' },
+  { key: 'operaciones', descripcion: 'Operaciones' },
 ];
 
 /** Códigos de permiso por rol */
@@ -141,20 +146,28 @@ export const rolPermisoCodigos: Record<string, string[]> = {
 
 export const menuItems = [
   {
+    padreMenuKey: 'principal',
     orden: 1,
-    nombre: 'Dashboard',
+    descripcion: 'Dashboard',
     icono: 'dashboard',
     path: '/dashboard',
     permisoCodigo: 'DASHBOARD_VER',
-    padreNombre: null as string | null,
   },
   {
-    orden: 2,
-    nombre: 'Reservas',
+    padreMenuKey: 'operaciones',
+    orden: 1,
+    descripcion: 'Reservas',
     icono: 'file',
     path: '/reservas',
     permisoCodigo: 'RESERVAS_VER',
-    padreNombre: null,
+  },
+  {
+    padreMenuKey: 'operaciones',
+    orden: 2,
+    descripcion: 'Clientes',
+    icono: 'users',
+    path: '/clientes',
+    permisoCodigo: 'CLIENTES_VER',
   },
 ];
 

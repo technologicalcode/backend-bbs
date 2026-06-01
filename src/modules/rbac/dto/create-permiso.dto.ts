@@ -9,5 +9,10 @@ export class CreatePermisoDto {
   @IsOptional()
   @IsString()
   @MaxLength(255)
-  nombre?: string;
+  descripcion?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(128)
+  modulo?: string;
 }

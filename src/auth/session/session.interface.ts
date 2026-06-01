@@ -1,23 +1,28 @@
-export interface SessionMenuNode {
+export interface SessionMenuItemNode {
   id_menu: number;
+  descripcion: string;
   orden: number;
-  nombre: string;
   icono: string | null;
   path: string | null;
   id_permiso: number | null;
-  hijos: SessionMenuNode[];
+}
+
+export interface SessionMenuGroupNode {
+  id_padre_menu: number;
+  descripcion: string;
+  items: SessionMenuItemNode[];
 }
 
 export interface SessionPermisoDto {
   id_permiso: number;
   codigo: string;
-  nombre: string | null;
+  descripcion: string | null;
 }
 
 export interface SessionRolDto {
   id_rol: number;
   codigo: string;
-  nombre: string;
+  descripcion: string;
 }
 
 export interface SessionUserDto {
@@ -30,5 +35,5 @@ export interface SessionData {
   user: SessionUserDto;
   roles: SessionRolDto[];
   permisos: SessionPermisoDto[];
-  menu: SessionMenuNode[];
+  menu: SessionMenuGroupNode[];
 }

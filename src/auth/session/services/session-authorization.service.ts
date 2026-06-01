@@ -20,13 +20,13 @@ export class SessionAuthorizationService {
     private readonly usuarioRolRepo: Repository<UsuarioRolEntity>,
   ) {}
 
-  async resolveRolesAndPermisos(idUser: number): Promise<{
+  async resolveRolesAndPermisos(idUsuario: number): Promise<{
     roles: SessionRolDto[];
     permisos: SessionPermisoDto[];
     allowedPermisoIds: Set<number>;
   }> {
     const usuarioRoles = await this.usuarioRolRepo.find({
-      where: { usuario: { id_usuario_credencial: idUser } },
+      where: { usuario: { id_usuario: idUsuario } },
       relations: ['rol'],
     });
 
@@ -66,13 +66,13 @@ export class SessionAuthorizationService {
     const rolesDto: SessionRolDto[] = roles.map((r) => ({
       id_rol: r.id_rol,
       codigo: r.codigo,
-      nombre: r.nombre,
+      descripcion: r.descripcion,
     }));
 
     const permisosDto: SessionPermisoDto[] = permisosEntities.map((p) => ({
       id_permiso: p.id_permiso,
       codigo: p.codigo,
-      nombre: p.nombre,
+      descripcion: p.descripcion,
     }));
 
     const allowedPermisoIds = new Set(

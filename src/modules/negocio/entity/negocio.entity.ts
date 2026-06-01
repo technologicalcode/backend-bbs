@@ -1,4 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { TipoNegocioEntity } from '../tipo-negocio/entity/tipo-negocio.entity';
+import { UsuariosEntity } from '../../usuarios/entity/usuarios.entity';
 
 @Entity('negocio')
 export class NegocioEntity {
@@ -9,24 +18,30 @@ export class NegocioEntity {
   descripcion: string;
 
   @Column({ name: 'ruc' })
-  ruc:string;
+  ruc: string;
 
   @Column({ name: 'direccion' })
-  direccion:string;
+  direccion: string;
 
   @Column({ name: 'telefono' })
-  telefono:string;
+  telefono: string;
 
   @Column({ name: 'correo' })
-  correo:string;
+  correo: string;
 
   @Column({ name: 'estado_negocio', type: 'int2', default: 1 })
   estado_negocio: number;
 
-  @Column({name:'encargado_negocio'})
-  encargado_negocio:number; // id_usuario
+  @Column({ name: 'encargado_negocio' })
+  encargado_negocio: number;
 
   @Column({ name: 'id_tipo_negocio' })
   id_tipo_negocio: number;
 
+  @ManyToOne(() => TipoNegocioEntity, (t) => t.negocios)
+  @JoinColumn({ name: 'id_tipo_negocio' })
+  tipo_negocio: TipoNegocioEntity;
+
+  @OneToMany(() => UsuariosEntity, (u) => u.negocio)
+  usuarios: UsuariosEntity[];
 }

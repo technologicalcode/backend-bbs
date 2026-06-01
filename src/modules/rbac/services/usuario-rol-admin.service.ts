@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ApiResponse } from 'src/core/interface/api-response';
-import { UsuarioCredencialesEntity } from 'src/modules/usuarios/entity/usuario-credenciales.entity';
+import { UsuariosEntity } from 'src/modules/usuarios/entity/usuarios.entity';
 import { RolEntity } from '../entity/rol.entity';
 import { UsuarioRolEntity } from '../entity/usuario-rol.entity';
 import { CreateUsuarioRolDto } from '../dto/create-usuario-rol.dto';
@@ -14,8 +14,8 @@ import { CreateUsuarioRolDto } from '../dto/create-usuario-rol.dto';
 @Injectable()
 export class UsuarioRolAdminService {
   constructor(
-    @InjectRepository(UsuarioCredencialesEntity)
-    private readonly credencialesRepo: Repository<UsuarioCredencialesEntity>,
+    @InjectRepository(UsuariosEntity)
+    private readonly usuariosRepo: Repository<UsuariosEntity>,
     @InjectRepository(RolEntity)
     private readonly rolRepo: Repository<RolEntity>,
     @InjectRepository(UsuarioRolEntity)
@@ -25,12 +25,12 @@ export class UsuarioRolAdminService {
   async createUsuarioRol(
     dto: CreateUsuarioRolDto,
   ): Promise<ApiResponse<UsuarioRolEntity>> {
-    const usuario = await this.credencialesRepo.findOne({
-      where: { id_usuario_credencial: dto.id_user },
+    const usuario = await this.usuariosRepo.findOne({
+      where: { id_usuario: dto.id_usuario },
     });
     if (!usuario) {
       throw new NotFoundException(
-        `Credencial id_user=${dto.id_user} no encontrada`,
+        `Usuario id_usuario=${dto.id_usuario} no encontrado`,
       );
     }
     const rol = await this.rolRepo.findOne({ where: { id_rol: dto.id_rol } });
@@ -39,7 +39,7 @@ export class UsuarioRolAdminService {
     }
     const dup = await this.usuarioRolRepo.findOne({
       where: {
-        usuario: { id_usuario_credencial: dto.id_user },
+        usuario: { id_usuario: dto.id_usuario },
         rol: { id_rol: dto.id_rol },
       },
     });

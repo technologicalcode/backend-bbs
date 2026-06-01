@@ -8,6 +8,7 @@ import {
   credenciales,
   horariosAtencion,
   menuItems,
+  padresMenu,
   negocios,
   permisos,
   rolPermisoCodigos,
@@ -24,7 +25,8 @@ import { UsuarioCredencialesEntity } from '../../modules/usuarios/entity/usuario
 import { PermisoEntity } from '../../modules/rbac/entity/permiso.entity';
 import { RolEntity } from '../../modules/rbac/entity/rol.entity';
 import { RolPermisoEntity } from '../../modules/rbac/entity/rol-permiso.entity';
-import { MenuItemEntity } from '../../modules/rbac/entity/menu-item.entity';
+import { MenuEntity } from '../../modules/rbac/entity/menu.entity';
+import { PadreMenuEntity } from '../../modules/rbac/entity/padre_menu.entity';
 import { UsuarioRolEntity } from '../../modules/rbac/entity/usuario-rol.entity';
 import { ClienteEntity } from '../../modules/clientes/cliente/entity/cliente.entity';
 import { HorarioAtencionEntity } from '../../modules/horario_atencion/entity/horario_atencion.entity';
@@ -47,6 +49,7 @@ const SEED_TABLES_ORDER = [
   'usuario_rol',
   'rol_permiso',
   'menu',
+  'padre_menu',
   'usuario_credenciales',
   'users',
   'usuarios',
@@ -151,8 +154,8 @@ async function runSeed(): Promise<void> {
           apellido: u.apellido,
           email: u.email,
           telefono: u.telefono,
-          id_tipo_usuario: tipo.id_tipo_usuario,
-          id_negocio: negocio.id_negocio,
+          tipo_usuario: tipo,
+          negocio,
         }),
       );
       usuarioByKey.set(u.key, saved);
@@ -192,43 +195,69 @@ async function runSeed(): Promise<void> {
     await rolPermisoRepo.save(rolPermisoRows);
     console.log(`Rol-permiso: ${rolPermisoRows.length} registro(s)`);
 
-    const menuRepo = dataSource.getRepository(MenuItemEntity);
-    const menuRows = menuItems.map((m) => {
+    const padreMenuRepo = dataSource.getRepository(PadreMenuEntity);
+    const savedPadresMenu = await padreMenuRepo.save(
+      padreMenuRepo.create(
+        padresMenu.map((p) => ({ descripcion: p.descripcion })),
+      ),
+    );
+    const padreMenuByKey = new Map(
+      padresMenu.map((p, i) => [p.key, savedPadresMenu[i]]),
+    );
+    console.log(`Padres menú: ${savedPadresMenu.length} registro(s)`);
+
+    const menuRepo = dataSource.getRepository(MenuEntity);
+    const menuRows = menuItems.flatMap((m) => {
+      const padre_menu = padreMenuByKey.get(m.padreMenuKey);
+      if (!padre_menu) return [];
       const permiso = m.permisoCodigo
         ? (permisoByCodigo.get(m.permisoCodigo) ?? null)
         : null;
-      return menuRepo.create({
-        orden: m.orden,
-        nombre: m.nombre,
-        icono: m.icono,
-        path: m.path,
-        permiso,
-        padre: null,
-      });
+      return [
+        menuRepo.create({
+          descripcion: m.descripcion,
+          orden: m.orden,
+          icono: m.icono,
+          path: m.path,
+          permiso,
+          padre_menu,
+        }),
+      ];
     });
     await menuRepo.save(menuRows);
     console.log(`Menú: ${menuRows.length} registro(s)`);
 
     const credencialesRepo = dataSource.getRepository(UsuarioCredencialesEntity);
     const usuarioRolRepo = dataSource.getRepository(UsuarioRolEntity);
+
     for (const c of credenciales) {
       const usuario = usuarioByKey.get(c.usuarioKey);
       if (!usuario) {
-        console.warn(`Credencial ${c.username}: usuario "${c.usuarioKey}" no encontrado`);
+        console.warn(
+          `Credencial ${c.username}: usuario "${c.usuarioKey}" no encontrado`,
+        );
         continue;
       }
-      const credencial = await credencialesRepo.save(
+      await credencialesRepo.save(
         credencialesRepo.create({
           username: c.username,
-          password: passwordHash,
+          password_hash: passwordHash,
           id_usuario: usuario.id_usuario,
         }),
       );
       const rol = rolByCodigo.get(c.rolCodigo);
       if (rol) {
-        await usuarioRolRepo.save(
-          usuarioRolRepo.create({ usuario: credencial, rol }),
-        );
+        const dup = await usuarioRolRepo.findOne({
+          where: {
+            usuario: { id_usuario: usuario.id_usuario },
+            rol: { id_rol: rol.id_rol },
+          },
+        });
+        if (!dup) {
+          await usuarioRolRepo.save(
+            usuarioRolRepo.create({ usuario, rol }),
+          );
+        }
       }
     }
     console.log(

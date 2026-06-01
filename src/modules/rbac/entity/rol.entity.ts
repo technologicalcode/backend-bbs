@@ -10,8 +10,8 @@ export class RolEntity {
   @Column({ name: 'codigo', type: 'varchar', unique: true })
   codigo: string;
 
-  @Column({ name: 'nombre', type: 'varchar' })
-  nombre: string;
+  @Column({ name: 'descripcion', type: 'varchar' })
+  descripcion: string;
 
   @OneToMany(() => RolPermisoEntity, (rp) => rp.rol)
   rol_permisos: RolPermisoEntity[];

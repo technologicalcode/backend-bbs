@@ -21,7 +21,7 @@ export class RolAdminService {
     }
     const row = this.rolRepo.create({
       codigo: dto.codigo.trim(),
-      nombre: dto.nombre.trim(),
+      descripcion: dto.descripcion.trim(),
     });
     const saved = await this.rolRepo.save(row);
     return {

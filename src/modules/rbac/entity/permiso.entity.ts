@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { RolPermisoEntity } from './rol-permiso.entity';
-import { MenuItemEntity } from './menu-item.entity';
+import { MenuEntity } from './menu.entity';
 
 @Entity('permiso')
 export class PermisoEntity {
@@ -10,12 +10,15 @@ export class PermisoEntity {
   @Column({ name: 'codigo', type: 'varchar', unique: true })
   codigo: string;
 
-  @Column({ name: 'nombre', type: 'varchar', nullable: true })
-  nombre: string | null;
+  @Column({ name: 'descripcion', type: 'varchar', nullable: true })
+  descripcion: string | null;
+
+  @Column({ name: 'modulo', type: 'varchar', nullable: true })
+  modulo: string | null;
 
   @OneToMany(() => RolPermisoEntity, (rp) => rp.permiso)
   rol_permisos: RolPermisoEntity[];
 
-  @OneToMany(() => MenuItemEntity, (m) => m.permiso)
-  menu_items: MenuItemEntity[];
+  @OneToMany(() => MenuEntity, (m) => m.permiso)
+  menu: MenuEntity[];
 }

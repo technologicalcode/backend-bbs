@@ -6,7 +6,7 @@ export class CreateUsuarioRolDto {
   @IsInt()
   @Min(1)
   @IsNotEmpty()
-  id_user: number;
+  id_usuario: number;
 
   @Type(() => Number)
   @IsInt()

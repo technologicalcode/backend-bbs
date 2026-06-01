@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsuarioCredencialesEntity } from '../usuarios/entity/usuario-credenciales.entity';
+import { UsuariosEntity } from '../usuarios/entity/usuarios.entity';
 import { RolEntity } from './entity/rol.entity';
 import { PermisoEntity } from './entity/permiso.entity';
 import { RolPermisoEntity } from './entity/rol-permiso.entity';
 import { UsuarioRolEntity } from './entity/usuario-rol.entity';
-import { MenuItemEntity } from './entity/menu-item.entity';
+import { MenuEntity } from './entity/menu.entity';
+import { PadreMenuEntity } from './entity/padre_menu.entity';
 import { RbacAdminService } from './rbac-admin.service';
 import { RbacAdminController } from './rbac-admin.controller';
 import { RolAdminService } from './services/rol-admin.service';
@@ -21,8 +22,9 @@ import { MenuAdminService } from './services/menu-admin.service';
       PermisoEntity,
       RolPermisoEntity,
       UsuarioRolEntity,
-      MenuItemEntity,
-      UsuarioCredencialesEntity,
+      MenuEntity,
+      PadreMenuEntity,
+      UsuariosEntity,
     ]),
   ],
   controllers: [RbacAdminController],

@@ -9,5 +9,5 @@ export class CreateRolDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(128)
-  nombre: string;
+  descripcion: string;
 }

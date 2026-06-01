@@ -5,7 +5,7 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
-import { UsuarioCredencialesEntity } from '../../usuarios/entity/usuario-credenciales.entity';
+import { UsuariosEntity } from '../../usuarios/entity/usuarios.entity';
 import { RolEntity } from './rol.entity';
 
 @Unique(['usuario', 'rol'])
@@ -14,14 +14,11 @@ export class UsuarioRolEntity {
   @PrimaryGeneratedColumn({ name: 'id_usuario_rol' })
   id_usuario_rol: number;
 
-  @ManyToOne(() => UsuarioCredencialesEntity, {
+  @ManyToOne(() => UsuariosEntity, (u) => u.usuario_roles, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn({
-    name: 'id_user',
-    referencedColumnName: 'id_usuario_credencial',
-  })
-  usuario: UsuarioCredencialesEntity;
+  @JoinColumn({ name: 'id_usuario' })
+  usuario: UsuariosEntity;
 
   @ManyToOne(() => RolEntity, (r) => r.usuario_roles, {
     onDelete: 'CASCADE',

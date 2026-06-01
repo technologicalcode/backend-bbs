@@ -1,4 +1,15 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { NegocioEntity } from '../../negocio/entity/negocio.entity';
+import { TipoUsuariosEntity } from './tipo-usuarios.entity';
+import { UsuarioCredencialesEntity } from './usuario-credenciales.entity';
+import { UsuarioRolEntity } from '../../rbac/entity/usuario-rol.entity';
 
 @Entity('usuarios')
 export class UsuariosEntity {
@@ -17,13 +28,20 @@ export class UsuariosEntity {
   @Column({ name: 'telefono' })
   telefono: string;
 
-  @Column({ name: 'id_tipo_usuario' })
-  id_tipo_usuario: number;
+  @Column({ name: 'estado', type: 'int2', default: 1 })
+  estado: number;
 
-  @Column({ name: 'estado_usuario', type: 'int2', default: 1 })
-  estado_usuario: number;
+  @ManyToOne(() => TipoUsuariosEntity, (t) => t.usuarios)
+  @JoinColumn({ name: 'id_tipo_usuario' })
+  tipo_usuario: TipoUsuariosEntity;
 
-  @Column({ name: 'id_negocio' })
-  id_negocio: number;
+  @ManyToOne(() => NegocioEntity, (n) => n.usuarios)
+  @JoinColumn({ name: 'id_negocio' })
+  negocio: NegocioEntity;
 
+  @OneToMany(() => UsuarioCredencialesEntity, (c) => c.usuario)
+  credenciales: UsuarioCredencialesEntity[];
+
+  @OneToMany(() => UsuarioRolEntity, (ur) => ur.usuario)
+  usuario_roles: UsuarioRolEntity[];
 }

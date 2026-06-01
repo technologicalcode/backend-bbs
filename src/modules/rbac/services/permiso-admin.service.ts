@@ -22,7 +22,8 @@ export class PermisoAdminService {
     }
     const row = this.permisoRepo.create({
       codigo,
-      nombre: dto.nombre?.trim() ?? null,
+      descripcion: dto.descripcion?.trim() ?? null,
+      modulo: dto.modulo?.trim() ?? null,
     });
     const saved = await this.permisoRepo.save(row);
     return {

@@ -1,59 +1,72 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { MenuItemEntity } from 'src/modules/rbac/entity/menu-item.entity';
-import type { SessionMenuNode } from '../session.interface';
+import { MenuEntity } from 'src/modules/rbac/entity/menu.entity';
+import { PadreMenuEntity } from 'src/modules/rbac/entity/padre_menu.entity';
+import type {
+  SessionMenuGroupNode,
+  SessionMenuItemNode,
+} from '../session.interface';
 
 @Injectable()
 export class SessionMenuService {
   constructor(
-    @InjectRepository(MenuItemEntity)
-    private readonly menuRepo: Repository<MenuItemEntity>,
+    @InjectRepository(MenuEntity)
+    private readonly menuRepo: Repository<MenuEntity>,
+    @InjectRepository(PadreMenuEntity)
+    private readonly padreMenuRepo: Repository<PadreMenuEntity>,
   ) {}
 
   async buildMenuForPermisos(
     allowedPermisoIds: Set<number>,
-  ): Promise<SessionMenuNode[]> {
-    const allMenus = await this.menuRepo.find({
-      relations: ['padre', 'permiso'],
-      order: { orden: 'ASC' },
-    });
+  ): Promise<SessionMenuGroupNode[]> {
+    const [padres, items] = await Promise.all([
+      this.padreMenuRepo.find({
+        where: { estado: 1 },
+        order: { descripcion: 'ASC' },
+      }),
+      this.menuRepo.find({
+        where: { estado: 1 },
+        relations: ['padre_menu', 'permiso'],
+        order: { orden: 'ASC' },
+      }),
+    ]);
 
-    const filteredMenus = allMenus.filter((m) => {
+    const filtered = items.filter((m) => {
       if (m.permiso == null) {
         return true;
       }
       return allowedPermisoIds.has(m.permiso.id_permiso);
     });
 
-    return this.buildMenuTree(filteredMenus);
+    const groups: SessionMenuGroupNode[] = padres.map((padre) => ({
+      id_padre_menu: padre.id_padre_menu,
+      descripcion: padre.descripcion,
+      items: filtered
+        .filter((m) => m.padre_menu?.id_padre_menu === padre.id_padre_menu)
+        .map((m) => this.toMenuItem(m)),
+    }));
+
+    const sinPadre = filtered.filter((m) => m.padre_menu == null);
+    if (sinPadre.length > 0) {
+      groups.push({
+        id_padre_menu: 0,
+        descripcion: 'General',
+        items: sinPadre.map((m) => this.toMenuItem(m)),
+      });
+    }
+
+    return groups.filter((g) => g.items.length > 0);
   }
 
-  private buildMenuTree(items: MenuItemEntity[]): SessionMenuNode[] {
-    const idSet = new Set(items.map((i) => i.id_menu));
-    const roots = items.filter((m) => {
-      if (m.padre == null) {
-        return true;
-      }
-      return !idSet.has(m.padre.id_menu);
-    });
-    roots.sort((a, b) => a.orden - b.orden);
-    return roots.map((r) => this.menuNode(r, items));
-  }
-
-  private menuNode(m: MenuItemEntity, all: MenuItemEntity[]): SessionMenuNode {
-    const hijos = all
-      .filter((x) => x.padre?.id_menu === m.id_menu)
-      .sort((a, b) => a.orden - b.orden)
-      .map((c) => this.menuNode(c, all));
+  private toMenuItem(m: MenuEntity): SessionMenuItemNode {
     return {
       id_menu: m.id_menu,
+      descripcion: m.descripcion,
       orden: m.orden,
-      nombre: m.nombre,
       icono: m.icono,
       path: m.path,
       id_permiso: m.permiso?.id_permiso ?? null,
-      hijos,
     };
   }
 }

@@ -18,7 +18,7 @@ export class SessionService {
     const user = await this.sessionUser.loadUser(payload.id_usuario_credencial);
     const { roles, permisos, allowedPermisoIds } =
       await this.sessionAuthorization.resolveRolesAndPermisos(
-        payload.id_usuario_credencial,
+        payload.id_usuario,
       );
     const menu = await this.sessionMenu.buildMenuForPermisos(allowedPermisoIds);
 

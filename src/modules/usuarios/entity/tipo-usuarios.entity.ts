@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { UsuariosEntity } from './usuarios.entity';
 
 @Entity('tipo_usuarios')
 export class TipoUsuariosEntity {
@@ -8,6 +9,9 @@ export class TipoUsuariosEntity {
   @Column({ name: 'descripcion' })
   descripcion: string;
 
-  @Column({ name: 'estado_tipo_usuario', type: 'int2', default: 1 })
-  estado_tipo_usuario: number;
+  @Column({ name: 'estado', type: 'int2', default: 1 })
+  estado: number;
+
+  @OneToMany(() => UsuariosEntity, (u) => u.tipo_usuario)
+  usuarios: UsuariosEntity[];
 }

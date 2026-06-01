@@ -3,7 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ApiResponse } from 'src/core/interface/api-response';
 import { PermisoEntity } from '../entity/permiso.entity';
-import { MenuItemEntity } from '../entity/menu-item.entity';
+import { PadreMenuEntity } from '../entity/padre_menu.entity';
+import { MenuEntity } from '../entity/menu.entity';
 import { CreateMenuDto } from '../dto/create-menu.dto';
 
 @Injectable()
@@ -11,11 +12,13 @@ export class MenuAdminService {
   constructor(
     @InjectRepository(PermisoEntity)
     private readonly permisoRepo: Repository<PermisoEntity>,
-    @InjectRepository(MenuItemEntity)
-    private readonly menuRepo: Repository<MenuItemEntity>,
+    @InjectRepository(PadreMenuEntity)
+    private readonly padreMenuRepo: Repository<PadreMenuEntity>,
+    @InjectRepository(MenuEntity)
+    private readonly menuRepo: Repository<MenuEntity>,
   ) {}
 
-  async createMenu(dto: CreateMenuDto): Promise<ApiResponse<MenuItemEntity>> {
+  async createMenu(dto: CreateMenuDto): Promise<ApiResponse<MenuEntity>> {
     let permiso: PermisoEntity | null = null;
     if (dto.id_permiso != null) {
       permiso = await this.permisoRepo.findOne({
@@ -27,22 +30,26 @@ export class MenuAdminService {
         );
       }
     }
-    let padre: MenuItemEntity | null = null;
-    if (dto.id_padre != null) {
-      padre = await this.menuRepo.findOne({ where: { id_menu: dto.id_padre } });
-      if (!padre) {
+
+    let padre_menu: PadreMenuEntity | null = null;
+    if (dto.id_padre_menu != null) {
+      padre_menu = await this.padreMenuRepo.findOne({
+        where: { id_padre_menu: dto.id_padre_menu },
+      });
+      if (!padre_menu) {
         throw new NotFoundException(
-          `Menú padre id_menu=${dto.id_padre} no encontrado`,
+          `Categoría id_padre_menu=${dto.id_padre_menu} no encontrada`,
         );
       }
     }
+
     const row = this.menuRepo.create({
-      nombre: dto.nombre.trim(),
-      orden: dto.orden ?? 0,
+      descripcion: dto.descripcion.trim(),
+      orden: dto.orden ?? 1,
       icono: dto.icono?.trim() ?? null,
       path: dto.path?.trim() ?? null,
       permiso,
-      padre,
+      padre_menu,
     });
     const saved = await this.menuRepo.save(row);
     return {

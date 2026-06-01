@@ -12,7 +12,7 @@ export class CreateMenuDto {
   @IsString()
   @IsNotEmpty()
   @MaxLength(128)
-  nombre: string;
+  descripcion: string;
 
   @IsOptional()
   @Type(() => Number)
@@ -40,5 +40,5 @@ export class CreateMenuDto {
   @Type(() => Number)
   @IsInt()
   @Min(1)
-  id_padre?: number;
+  id_padre_menu?: number;
 }

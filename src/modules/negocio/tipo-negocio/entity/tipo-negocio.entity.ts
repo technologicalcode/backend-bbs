@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { NegocioEntity } from '../../entity/negocio.entity';
 
 @Entity('tipo_negocio')
 export class TipoNegocioEntity {
@@ -10,4 +11,7 @@ export class TipoNegocioEntity {
 
   @Column({ name: 'estado_tipo_negocio', type: 'int2', default: 1 })
   estado_tipo_negocio: number;
+
+  @OneToMany(() => NegocioEntity, (n) => n.tipo_negocio)
+  negocios: NegocioEntity[];
 }

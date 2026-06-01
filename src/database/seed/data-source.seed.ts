@@ -10,7 +10,8 @@ import { RolEntity } from '../../modules/rbac/entity/rol.entity';
 import { PermisoEntity } from '../../modules/rbac/entity/permiso.entity';
 import { RolPermisoEntity } from '../../modules/rbac/entity/rol-permiso.entity';
 import { UsuarioRolEntity } from '../../modules/rbac/entity/usuario-rol.entity';
-import { MenuItemEntity } from '../../modules/rbac/entity/menu-item.entity';
+import { MenuEntity } from '../../modules/rbac/entity/menu.entity';
+import { PadreMenuEntity } from '../../modules/rbac/entity/padre_menu.entity';
 import { HorarioAtencionEntity } from '../../modules/horario_atencion/entity/horario_atencion.entity';
 import { CitasEntity } from '../../modules/citas/entity/citas.entity';
 
@@ -34,12 +35,13 @@ export function createSeedDataSource(): DataSource {
       TipoUsuariosEntity,
       UsuariosEntity,
       UsuarioCredencialesEntity,
-      ClienteEntity,
       RolEntity,
       PermisoEntity,
       RolPermisoEntity,
       UsuarioRolEntity,
-      MenuItemEntity,
+      PadreMenuEntity,
+      MenuEntity,
+      ClienteEntity,
       HorarioAtencionEntity,
       CitasEntity,
     ],
