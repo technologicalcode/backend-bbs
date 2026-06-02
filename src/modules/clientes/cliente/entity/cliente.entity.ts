@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 
 @Entity('clientes')
 export class ClienteEntity {
@@ -19,4 +19,8 @@ export class ClienteEntity {
 
   @Column({ name: 'estado_cl',type: 'int2' })
   estado_cl: number;
+
+  @OneToMany(()=>ClienteEntity, (c)=>c.id_cliente)
+  clientes: ClienteEntity[];
+
 }

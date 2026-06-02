@@ -8,7 +8,6 @@ import type {
   CitaGenerada,
 } from './interfaces/citas.interface';
 import type { ICitasWriter } from './interfaces/citas-writer.interface';
-import { ESTADO_CITA_DISPONIBLE } from './constants/estado-cita.constants';
 import { CitaHelper } from './helper/citas.helper';
 //import { BarberoService } from '../barbero/barbero.service';
 import { UsuariosEntity } from '../usuarios/entity/usuarios.entity';
@@ -37,7 +36,7 @@ export class CitasService implements ICitasWriter {
       fecha_cita: new Date(c.fecha),
       hora_cita_inicio: c.hora_cita_inicio,
       hora_cita_fin: c.hora_cita_fin,
-      estado_cita: ESTADO_CITA_DISPONIBLE,
+      estado_cita: 1,
     }));
 
     const repo = manager
@@ -63,7 +62,7 @@ export class CitasService implements ICitasWriter {
         "CONCAT(us.nombre, ' ', us.apellido) AS profesional",
       ])
       .where('ct.estado_cita = :estado', {
-        estado: ESTADO_CITA_DISPONIBLE,
+        estado: 1,
       })
       .getRawMany<CitaDisponibleView>();
 

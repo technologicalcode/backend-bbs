@@ -1,4 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { ClienteEntity } from 'src/modules/clientes/cliente/entity/cliente.entity';
+import { NegocioEntity } from 'src/modules/negocio/entity/negocio.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn, ManyToOne } from 'typeorm';
 
 @Entity('citas')
 export class CitasEntity {
@@ -7,6 +9,9 @@ export class CitasEntity {
 
   @Column({ name: 'id_cliente', type: 'int', nullable: true })
   id_cliente: number | null;
+
+  @Column({ name: 'id_negocio', type: 'int', nullable: true })
+  id_negocio: number | null;
 
   @Column({ name: 'id_usuario' })
   id_usuario: number;
@@ -27,4 +32,8 @@ export class CitasEntity {
    */
   @Column({ name: 'estado_cita', type: 'int2', default: 1 })
   estado_cita: number;
+
+  @ManyToOne(()=>ClienteEntity, (c)=>c.id_cliente)
+  @JoinColumn({ name: 'id_cliente' })
+  cliente: ClienteEntity;
 }

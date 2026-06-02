@@ -6,7 +6,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { TipoNegocioEntity } from '../tipo-negocio/entity/tipo-negocio.entity';
+import { TipoNegocioEntity } from './tipo-negocio.entity';
 import { UsuariosEntity } from '../../usuarios/entity/usuarios.entity';
 
 @Entity('negocio')
