@@ -28,8 +28,8 @@ export class HorarioAtencionEntity {
   @Column({ name: 'estado_ha', type: 'int2', default: 1 })
   estado_ha: number;
 
-  @Column({ name: 'duracion_slot_min', type: 'int', default: 30 })
-  duracion_slot_min: number;
+  @Column({ name: 'duracion_slot', type: 'int', default: 30 })
+  duracion_slot: number;
 
   @Column({ name: 'tiempo_libre', type: 'int', default: 0 })
   tiempo_libre: number;

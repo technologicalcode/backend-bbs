@@ -33,6 +33,9 @@ function OptionalTimeField(message: string) {
 }
 
 export class CreateHorarioAtencionDto {
+  
+  id_usuario: number;
+
   @OptionalTimeField('hora_inicio debe tener formato HH:mm o HH:mm:ss')
   hora_inicio?: string | null;
 
@@ -43,20 +46,21 @@ export class CreateHorarioAtencionDto {
   @IsNotEmpty()
   fecha: string;
 
-  @Type(() => Number)
-  @IsInt()
-  @Min(1)
-  @IsNotEmpty()
-  estado_ha: number;
+  duracion_slot: number;
 
-  @OptionalTimeField(
-    'horas_ausencia_inicio debe tener formato HH:mm o HH:mm:ss',
-  )
-  horas_ausencia_inicio?: string | null;
+  tiempo_libre: number;
 
-  @OptionalTimeField('horas_ausencia_fin debe tener formato HH:mm o HH:mm:ss')
-  horas_ausencia_fin?: string | null;
+  bloqueos_horario: DtaBloqueoHorario[];
+}
 
-  @OptionalTimeField('tiempo_proceso debe tener formato HH:mm o HH:mm:ss')
-  tiempo_proceso?: string | null;
+class DtaBloqueoHorario{
+  
+  id_horario_atencion: number;
+
+  hora_inicio: string;
+
+  hora_fin: string;
+
+  motivo: string | null;
+
 }

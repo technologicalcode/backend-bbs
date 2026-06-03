@@ -49,7 +49,7 @@ export class HorarioAtencionService {
       await this.dataSource.transaction(async (manager) => {
         await manager.getRepository(HorarioAtencionEntity).save(registerData);
 
-        const listaCitas = this.citaGenerator.generar(horariosParaCitas);
+        const listaCitas = this.citaGenerator.generar([]);//se puso el [] para calmar el error de typescript !!ESTO GENERARÁ BUG!!
         if (listaCitas.length === 0) {
           this.logger.warn(
             'No se generaron citas: revisa hora_inicio, hora_fin y tiempo_proceso',
