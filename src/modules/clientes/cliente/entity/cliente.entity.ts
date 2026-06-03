@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import {
+  Column,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { ConversacionWspEntity } from 'src/modules/WhatsApp/entity/conversacion_wsp.entity';
+import { CitasEntity } from 'src/modules/citas/entity/citas.entity';
 
 @Entity('clientes')
 export class ClienteEntity {
@@ -17,10 +24,12 @@ export class ClienteEntity {
   @Column({ name: 'num_documento' })
   num_documento: string;
 
-  @Column({ name: 'estado_cl',type: 'int2' })
+  @Column({ name: 'estado_cl', type: 'int2' })
   estado_cl: number;
 
-  @OneToMany(()=>ClienteEntity, (c)=>c.id_cliente)
-  clientes: ClienteEntity[];
+  @OneToMany(() => ConversacionWspEntity, (c) => c.cliente)
+  conversaciones_wsp: ConversacionWspEntity[];
 
+  @OneToMany(() => CitasEntity, (c) => c.cliente)
+  citas: CitasEntity[];
 }

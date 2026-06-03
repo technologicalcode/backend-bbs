@@ -10,6 +10,7 @@ import { SessionModule } from './auth/session/session.module';
 import { UsuariosModule } from './modules/usuarios/usuarios.module';
 import { RbacModule } from './modules/rbac/rbac.module';
 import { NegocioModule } from './modules/negocio/negocio.module';
+import { WhatsAppModule } from './modules/WhatsApp/WhatsApp.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { NegocioModule } from './modules/negocio/negocio.module';
     CitasModule,
     HorarioAtencionModule,
     NegocioModule,
+    WhatsAppModule,
     LoginModule,
     SessionModule,
     UsuariosModule,

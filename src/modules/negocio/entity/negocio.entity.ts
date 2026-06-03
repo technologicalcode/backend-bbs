@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { TipoNegocioEntity } from './tipo-negocio.entity';
 import { UsuariosEntity } from '../../usuarios/entity/usuarios.entity';
+import { ConversacionWspEntity } from '../../WhatsApp/entity/conversacion_wsp.entity';
 
 @Entity('negocio')
 export class NegocioEntity {
@@ -44,4 +45,7 @@ export class NegocioEntity {
 
   @OneToMany(() => UsuariosEntity, (u) => u.negocio)
   usuarios: UsuariosEntity[];
+
+  @OneToMany(() => ConversacionWspEntity, (c) => c.negocio)
+  conversaciones_wsp: ConversacionWspEntity[];
 }

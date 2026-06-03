@@ -17,7 +17,7 @@ import {
   tiposUsuario,
   usuarios,
 } from './seed.data';
-import { TipoNegocioEntity } from '../../modules/negocio/tipo-negocio/entity/tipo-negocio.entity';
+import { TipoNegocioEntity } from '../../modules/negocio/entity/tipo-negocio.entity';
 import { NegocioEntity } from '../../modules/negocio/entity/negocio.entity';
 import { TipoUsuariosEntity } from '../../modules/usuarios/entity/tipo-usuarios.entity';
 import { UsuariosEntity } from '../../modules/usuarios/entity/usuarios.entity';

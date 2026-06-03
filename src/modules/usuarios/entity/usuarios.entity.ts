@@ -44,4 +44,7 @@ export class UsuariosEntity {
 
   @OneToMany(() => UsuarioRolEntity, (ur) => ur.usuario)
   usuario_roles: UsuarioRolEntity[];
+
+  @OneToMany(() => UsuariosEntity, (u) => u.id_usuario)
+  usuarios: UsuariosEntity[];
 }
