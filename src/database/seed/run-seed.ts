@@ -7,6 +7,7 @@ import {
   clientes,
   credenciales,
   horariosAtencion,
+  bloqueosHorario,
   menuItems,
   padresMenu,
   negocios,
@@ -30,6 +31,7 @@ import { PadreMenuEntity } from '../../modules/rbac/entity/padre_menu.entity';
 import { UsuarioRolEntity } from '../../modules/rbac/entity/usuario-rol.entity';
 import { ClienteEntity } from '../../modules/clientes/cliente/entity/cliente.entity';
 import { HorarioAtencionEntity } from '../../modules/horario_atencion/entity/horario_atencion.entity';
+import { BloqueosHorarioEntity } from '../../modules/horario_atencion/entity/bloqueos_horario.entity';
 import { CitasEntity } from '../../modules/citas/entity/citas.entity';
 
 function assertSafeToRun(): void {
@@ -275,6 +277,7 @@ async function runSeed(): Promise<void> {
     console.log(`Clientes: ${clientes.length} registro(s)`);
 
     const horarioRepo = dataSource.getRepository(HorarioAtencionEntity);
+    const horarioIdByKey = new Map<string, number>();
     const horarioRows = horariosAtencion.flatMap((h) => {
       const usuario = usuarioByKey.get(h.usuarioKey);
       if (!usuario) return [];
@@ -284,15 +287,38 @@ async function runSeed(): Promise<void> {
           fecha: new Date(h.fecha),
           hora_inicio: h.hora_inicio,
           hora_fin: h.hora_fin,
-          horas_ausencia_inicio: h.horas_ausencia_inicio,
-          horas_ausencia_fin: h.horas_ausencia_fin,
-          tiempo_proceso: h.tiempo_proceso,
+          duracion_slot_min: h.duracion_slot_min,
+          tiempo_libre: h.tiempo_libre,
           estado_ha: h.estado_ha,
         }),
       ];
     });
-    await horarioRepo.save(horarioRows);
-    console.log(`Horarios atención: ${horarioRows.length} registro(s)`);
+    const savedHorarios = await horarioRepo.save(horarioRows);
+    let horarioIdx = 0;
+    for (const h of horariosAtencion) {
+      if (!usuarioByKey.has(h.usuarioKey)) continue;
+      const saved = savedHorarios[horarioIdx++];
+      if (saved?.id_horario_atencion) {
+        horarioIdByKey.set(`${h.usuarioKey}|${h.fecha}`, saved.id_horario_atencion);
+      }
+    }
+    console.log(`Horarios atención: ${savedHorarios.length} registro(s)`);
+
+    const bloqueoRepo = dataSource.getRepository(BloqueosHorarioEntity);
+    const bloqueoRows = bloqueosHorario.flatMap((b) => {
+      const idHorario = horarioIdByKey.get(`${b.usuarioKey}|${b.fecha}`);
+      if (!idHorario) return [];
+      return [
+        bloqueoRepo.create({
+          id_horario_atencion: idHorario,
+          hora_inicio: b.hora_inicio,
+          hora_fin: b.hora_fin,
+          motivo: b.motivo,
+        }),
+      ];
+    });
+    await bloqueoRepo.save(bloqueoRows);
+    console.log(`Bloqueos horario: ${bloqueoRows.length} registro(s)`);
 
     const citaRepo = dataSource.getRepository(CitasEntity);
     const citaRows = citas.flatMap((c) => {

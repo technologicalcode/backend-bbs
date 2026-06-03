@@ -28,14 +28,11 @@ export class HorarioAtencionEntity {
   @Column({ name: 'estado_ha', type: 'int2', default: 1 })
   estado_ha: number;
 
-  @Column({ name: 'horas_ausencia_inicio', type: 'time', nullable: true })
-  horas_ausencia_inicio: string | null;
+  @Column({ name: 'duracion_slot_min', type: 'int', default: 30 })
+  duracion_slot_min: number;
 
-  @Column({ name: 'horas_ausencia_fin', type: 'time', nullable: true })
-  horas_ausencia_fin: string | null;
-
-  @Column({ name: 'tiempo_proceso', type: 'time', nullable: true })
-  tiempo_proceso: string | null;
+  @Column({ name: 'tiempo_libre', type: 'int', default: 0 })
+  tiempo_libre: number;
 
   @CreateDateColumn({ name: 'create_at', type: 'timestamp' })
   createAt: Date;

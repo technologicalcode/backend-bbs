@@ -201,9 +201,8 @@ export const horariosAtencion = [
     fecha: '2026-05-20',
     hora_inicio: '09:00:00',
     hora_fin: '18:00:00',
-    horas_ausencia_inicio: '13:00:00',
-    horas_ausencia_fin: '14:00:00',
-    tiempo_proceso: '00:30:00',
+    duracion_slot_min: 30,
+    tiempo_libre: 0,
     estado_ha: 1,
   },
   {
@@ -211,9 +210,8 @@ export const horariosAtencion = [
     fecha: '2026-05-20',
     hora_inicio: '10:00:00',
     hora_fin: '14:00:00',
-    horas_ausencia_inicio: null,
-    horas_ausencia_fin: null,
-    tiempo_proceso: '00:30:00',
+    duracion_slot_min: 30,
+    tiempo_libre: 0,
     estado_ha: 1,
   },
   {
@@ -221,10 +219,27 @@ export const horariosAtencion = [
     fecha: '2026-05-21',
     hora_inicio: '11:00:00',
     hora_fin: '19:00:00',
-    horas_ausencia_inicio: '14:00:00',
-    horas_ausencia_fin: '15:00:00',
-    tiempo_proceso: '00:45:00',
+    duracion_slot_min: 45,
+    tiempo_libre: 0,
     estado_ha: 1,
+  },
+];
+
+/** Bloqueos dentro de un horario (antes horas_ausencia_* en horarios_atencion) */
+export const bloqueosHorario = [
+  {
+    usuarioKey: 'barbero1',
+    fecha: '2026-05-20',
+    hora_inicio: '13:00:00',
+    hora_fin: '14:00:00',
+    motivo: 'Almuerzo',
+  },
+  {
+    usuarioKey: 'barbero-norte',
+    fecha: '2026-05-21',
+    hora_inicio: '14:00:00',
+    hora_fin: '15:00:00',
+    motivo: 'Almuerzo',
   },
 ];
 
