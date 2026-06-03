@@ -13,7 +13,13 @@ import { UsuarioRolEntity } from '../../modules/rbac/entity/usuario-rol.entity';
 import { MenuEntity } from '../../modules/rbac/entity/menu.entity';
 import { PadreMenuEntity } from '../../modules/rbac/entity/padre_menu.entity';
 import { HorarioAtencionEntity } from '../../modules/horario_atencion/entity/horario_atencion.entity';
+import { BloqueosHorarioEntity } from '../../modules/horario_atencion/entity/bloqueos_horario.entity';
 import { CitasEntity } from '../../modules/citas/entity/citas.entity';
+import { ConversacionWspEntity } from '../../modules/WhatsApp/entity/conversacion_wsp.entity';
+import { PlanEntity } from '../../modules/plan/entity/plan.entity';
+import { NegocioPlanEntity } from '../../modules/plan/entity/negocio_plan.entity';
+import { PlanPermisoEntity } from '../../modules/plan/entity/plan_permiso.entity';
+import { PagosEntity } from '../../modules/plan/entity/pagos.entity';
 
 const LOCAL_DATABASE_URL = 'postgresql://postgres:postgres@127.0.0.1:5432/bbs';
 
@@ -42,8 +48,14 @@ export function createSeedDataSource(): DataSource {
       PadreMenuEntity,
       MenuEntity,
       ClienteEntity,
+      ConversacionWspEntity,
       HorarioAtencionEntity,
+      BloqueosHorarioEntity,
       CitasEntity,
+      PlanEntity,
+      NegocioPlanEntity,
+      PlanPermisoEntity,
+      PagosEntity,
     ],
     synchronize: false,
   });

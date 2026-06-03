@@ -11,6 +11,7 @@ import { UsuariosModule } from './modules/usuarios/usuarios.module';
 import { RbacModule } from './modules/rbac/rbac.module';
 import { NegocioModule } from './modules/negocio/negocio.module';
 import { WhatsAppModule } from './modules/WhatsApp/WhatsApp.module';
+import { PlanModule } from './modules/plan/plan.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { WhatsAppModule } from './modules/WhatsApp/WhatsApp.module';
     LoginModule,
     SessionModule,
     UsuariosModule,
+    PlanModule,
   ],
 })
 export class AppModule {}

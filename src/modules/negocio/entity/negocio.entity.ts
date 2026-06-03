@@ -39,6 +39,9 @@ export class NegocioEntity {
   @Column({ name: 'id_tipo_negocio' })
   id_tipo_negocio: number;
 
+   @Column({name:'es_independiente', type: 'int2', default: 0})
+   es_independiente: number;
+
   @ManyToOne(() => TipoNegocioEntity, (t) => t.negocios)
   @JoinColumn({ name: 'id_tipo_negocio' })
   tipo_negocio: TipoNegocioEntity;

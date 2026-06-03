@@ -44,7 +44,13 @@ function assertSafeToRun(): void {
 }
 
 const SEED_TABLES_ORDER = [
+  'pagos',
+  'plan_permiso',
+  'negocio_plan',
+  'plan',
   'citas',
+  'conversacion_wsp',
+  'bloqueos_horario',
   'horarios_atencion',
   'usuario_rol',
   'rol_permiso',

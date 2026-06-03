@@ -4,7 +4,9 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { BloqueosHorarioEntity } from './bloqueos_horario.entity';
 
 @Entity('horarios_atencion')
 export class HorarioAtencionEntity {
@@ -40,4 +42,7 @@ export class HorarioAtencionEntity {
 
   @UpdateDateColumn({ name: 'update_at', type: 'timestamp' })
   updateAt: Date;
+
+  @OneToMany(() => BloqueosHorarioEntity, (b) => b.horario_atencion)
+  bloqueos: BloqueosHorarioEntity[];
 }
