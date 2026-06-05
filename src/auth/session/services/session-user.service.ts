@@ -15,7 +15,7 @@ export class SessionUserService {
     private readonly usuariosRepo: Repository<UsuariosEntity>,
   ) {}
 
-  async loadUser(idUsuarioCredencial: number): Promise<SessionUserDto> {
+  async loadUser(idUsuarioCredencial: string): Promise<SessionUserDto> {
     const credencial = await this.credencialesRepo.findOne({
       where: { id_usuario_credencial: idUsuarioCredencial },
       select: ['id_usuario_credencial', 'username', 'id_usuario'],

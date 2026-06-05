@@ -26,7 +26,7 @@ export interface SessionRolDto {
 }
 
 export interface SessionUserDto {
-  id_usuario_credencial: number;
+  id_usuario_credencial: string;
   username: string;
   id_usuario: number;
 }

@@ -249,7 +249,7 @@ async function runSeed(): Promise<void> {
       await credencialesRepo.save(
         credencialesRepo.create({
           username: c.username,
-          password_hash: passwordHash,
+          password: passwordHash,
           id_usuario: usuario.id_usuario,
         }),
       );
@@ -287,7 +287,7 @@ async function runSeed(): Promise<void> {
           fecha: new Date(h.fecha),
           hora_inicio: h.hora_inicio,
           hora_fin: h.hora_fin,
-          duracion_slot_min: h.duracion_slot_min,
+          duracion_slot: h.duracion_slot,
           tiempo_libre: h.tiempo_libre,
           estado_ha: h.estado_ha,
         }),

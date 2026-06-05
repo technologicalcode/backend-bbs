@@ -28,7 +28,7 @@ export class AuthCredentialsService {
 
     const isPasswordValid = await compare(
       credentials.password,
-      credencial_username.password_hash,
+      credencial_username.password,
     );
 
     if (!isPasswordValid) {

@@ -201,7 +201,7 @@ export const horariosAtencion = [
     fecha: '2026-05-20',
     hora_inicio: '09:00:00',
     hora_fin: '18:00:00',
-    duracion_slot_min: 30,
+    duracion_slot: 30,
     tiempo_libre: 0,
     estado_ha: 1,
   },

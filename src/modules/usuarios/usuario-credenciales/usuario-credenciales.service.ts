@@ -25,11 +25,11 @@ export class UsuarioCredencialesService {
       };
     }
 
-    const password_hash = await hash(dto.password, 10);
+    const password = await hash(dto.password, 10);
 
     const newCredencial = this.credencialesRepo.create({
       username: dto.username,
-      password_hash,
+      password,
       id_usuario: idUsuario,
     });
 

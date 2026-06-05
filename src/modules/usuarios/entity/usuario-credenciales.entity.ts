@@ -24,8 +24,8 @@ export class UsuarioCredencialesEntity {
   @Column({ name: 'username', unique: true })
   username: string;
 
-  @Column({ name: 'password_hash', type: 'varchar', length: 255 })
-  password_hash: string;
+  @Column({ name: 'password', type: 'varchar', length: 255 })
+  password: string;
 
   @Column({ name: 'estado', type: 'int2', default: 1 })
   estado: number;
