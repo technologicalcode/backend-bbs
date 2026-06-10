@@ -1,196 +1,212 @@
-# Instructivo — Resolución de problemas comunes
+# Pasos para levantar el proyecto — Configuración del entorno de trabajo (workspace)
 
-## Problemas de versiones de TypeScript (VS Code / Cursor)
-
-### ¿Qué pasa?
-
-A veces el **editor** muestra errores en rojo (entidades TypeORM, `tsconfig.json`, etc.) pero el proyecto **sí compila** con `npm run build` o `npm run start:dev`.
-
-Eso suele ocurrir porque hay **dos TypeScript distintos**:
-
-| Origen | Para qué sirve |
-|--------|----------------|
-| **TypeScript del IDE** (ej. VS Code 6.0.3) | Subraya errores, autocompletado |
-| **TypeScript del proyecto** (`node_modules/typescript`) | `npm run build`, `npx tsc`, Nest |
-
-Tener la misma versión en terminal (`npx tsc -v`) **no garantiza** que el IDE use la misma.
+Guía para dejar **backend-bbs** listo en cualquier máquina del equipo, con las mismas versiones de Node, npm, TypeScript y base de datos.
 
 ---
 
-### Síntomas habituales
+## Requisitos del proyecto
 
-Estos errores **no siempre significan que el código esté mal**. Muchas veces el IDE analiza con una versión de TypeScript distinta a la del proyecto.
+| Herramienta | Versión |
+|-------------|---------|
+| Node.js | `22.19.0` |
+| npm | `11.7.0` |
+| TypeScript (proyecto) | `5.7.3` |
+| Docker | Para Postgres local (`docker compose`) |
 
-#### Ejemplo 1 — Entidades TypeORM en rojo
-
-Mensaje típico: *«La propiedad `id_cliente` no tiene inicializador y no está asignada de forma definitiva en el constructor»*.
-
-Ocurre en clases como `ClienteEntity` porque TypeORM llena esas propiedades en runtime, pero el analizador del IDE las trata como campos normales de TypeScript.
-
-![Ejemplo 1: errores en propiedades de ClienteEntity sin inicializador](./public/imagen_error_version_uno.jpeg)
-
-**Qué revisar:** si `npm run build` compila bien, el problema es casi seguro del **IDE**, no de la entidad.
+El archivo `.nvmrc` define la versión de Node. El `package-lock.json` fija las dependencias exactas.
 
 ---
 
-#### Ejemplo 2 — Avisos en `tsconfig.json`
+## 1. Clonar e ingresar al proyecto
 
-Advertencias sobre `rootDir`, `baseUrl` en desuso, etc. Dependen de la versión de TypeScript que use el **editor**, no solo la de terminal.
+```bash
+git clone <url-del-repo>
+cd backend-bbs
+```
 
-![Ejemplo 2: avisos en tsconfig.json según versión del IDE](./public/imagen_error_version_dos.jpeg)
-
-**Qué revisar:** comparar `npx tsc -v` con la versión que muestra el selector del IDE (paso 1 siguiente).
+Abrir en VS Code / Cursor la **carpeta raíz** `backend-bbs` (no una subcarpeta).
 
 ---
 
-### Proceso de solución (seguir en orden)
+## 2. Verificar el entorno
 
-#### Paso 1 — Confirmar qué TypeScript usa el IDE
+### Windows (PowerShell)
 
-1. Abrir la **raíz del proyecto** (`backend-bbs`), no una subcarpeta.
-2. `Ctrl + Shift + P` → **TypeScript: Select TypeScript Version**  
-   (en español: *Seleccionar la versión de TypeScript usada para las características del lenguaje…*).
-3. **Problema detectado:** si solo aparece **«Utilizar la versión de VS Code 6.0.3»** (u otra del editor) y **no** aparece **«Use Workspace Version»**, el IDE **no** está usando el TypeScript del proyecto.
+```powershell
+npm run verify:win
+```
 
-![Ejemplo 3: IDE configurado con TypeScript de VS Code en lugar del workspace](./public/imagen_error_version_tres.jpeg)
+Comprueba:
 
-**Objetivo:** después del paso 3, debe quedar seleccionado **Use Workspace Version** → `node_modules/typescript/lib`.
+- Node `v22.19.0`
+- npm `11.7.0`
+- Docker instalado
+- TypeScript del proyecto (`node_modules/typescript`)
 
-#### Paso 2 — Instalar dependencias del proyecto
+Si algo falta o no coincide, el script indica qué corregir.
 
-En la raíz del repo:
+### Linux / macOS (bash)
 
 ```bash
-npm ci
+npm run verify:linux
 ```
 
-> Usar **`npm ci`**, no `npm install`, para respetar exactamente el `package-lock.json`.
-
-Comprobar que existe TypeScript local:
-
-```bash
-npx tsc -v
-```
-
-Debe mostrar la versión instalada en `node_modules` (la del lockfile del repo).
-
-#### Paso 3 — Forzar TypeScript del workspace en el IDE
-
-Repetir **Paso 1** y elegir:
-
-**Use Workspace Version** → `node_modules/typescript/lib`
-
-Si la opción no aparece:
-
-- Verificar que corriste `npm ci` sin errores.
-- Verificar que existe la carpeta `node_modules/typescript`.
-- Cerrar y volver a abrir el IDE con la carpeta `backend-bbs` como raíz.
-
-#### Paso 4 — (Opcional) Fijar la configuración para todo el equipo
-
-Crear `.vscode/settings.json` en el repo:
-
-```json
-{
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true
-}
-```
-
-Commitear ese archivo para que todos usen la misma versión al abrir el proyecto.
-
-#### Paso 5 — Verificar que el código compila
-
-```bash
-npm run build
-```
-
-| Resultado | Significado |
-|-----------|-------------|
-| **Build OK** y el IDE sigue en rojo | Problema del **editor**; repetir pasos 3 y 4. |
-| **Build falla** | Problema real de compilación; revisar `tsconfig.json` y dependencias. |
+Mismas comprobaciones que en Windows.
 
 ---
 
-### Checklist rápido para el equipo
+## 3. Preparar e instalar lo que falta
 
-```bash
-git pull
-npm ci
-npx tsc -v
-npm run build
+Ejecutar **solo si** `verify:win` o `verify:linux` reportó problemas, o es la **primera vez** en la máquina.
+
+### Windows
+
+```powershell
+npm run setup:win
 ```
 
-En el IDE: **TypeScript: Select TypeScript Version** → **Use Workspace Version**.
+El script intenta:
+
+1. Usar **nvm-windows** con Node `22.19.0`
+2. Ejecutar `npm ci`
+3. Levantar Postgres con `docker compose --profile local up -d`
+4. Volver a verificar el entorno
+
+> Si no tienes **nvm-windows**, instálalo desde:  
+> https://github.com/coreybutler/nvm-windows/releases  
+> Luego: `nvm install 22.19.0` y `nvm use 22.19.0`
+
+### Linux / macOS
+
+```bash
+npm run setup:linux
+```
+
+El script intenta:
+
+1. Usar **nvm** con la versión de `.nvmrc`
+2. Ejecutar `npm ci`
+3. Levantar Postgres con Docker
+4. Volver a verificar el entorno
+
+> Si no tienes **nvm**: https://github.com/nvm-sh/nvm
 
 ---
 
-### Notas
-
-- **Docker** unifica Postgres y el runtime en contenedor; **no** cambia qué TypeScript usa el IDE. Para eso hace falta el workspace TS (pasos anteriores).
-- No commitear cambios locales en `tsconfig.json` sin acordarlo con el equipo.
-- Siempre commitear `package-lock.json` junto con `package.json`.
-- Las capturas del instructivo están en `public/`. **Deben subirse a Git** para verse en GitHub:
+## 4. Configurar variables de entorno
 
 ```bash
-git add public/ README.md
-git commit -m "docs: instructivo TypeScript con imágenes"
-git push
+cp .env.example .env
+```
+
+Edita `.env` según tu entorno. Mínimo para local con Docker:
+
+```env
+DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/bbs
+TYPEORM_SYNC=false
 ```
 
 ---
 
-## Base de datos con Docker
+## 5. Configurar el workspace del IDE (TypeScript)
 
-### Levantar Postgres
+El repositorio incluye `.vscode/settings.json` para que el editor use **TypeScript del proyecto**, no el del IDE.
 
-```bash
-npm run db:up
-```
+1. `Ctrl + Shift + P`
+2. **TypeScript: Select TypeScript Version**
+3. Elegir **Use Workspace Version**
 
-Credenciales por defecto (ver `docker-compose.yml`):
+Si no aparece esa opción, ejecuta antes `npm ci`.
 
-- Usuario: `postgres`
-- Contraseña: `postgres`
-- Base: `bbs`
-- Puerto host: `5432`
+---
 
-### Entrar a la base desde la terminal
+## 6. Base de datos y datos de prueba
 
 ```bash
-docker exec -it backend-bbs-db psql -U postgres -d bbs
+npm run db:up      # levantar Postgres (si no está corriendo)
+npm run seed       # cargar datos de prueba (vacía tablas antes)
 ```
 
-Desde el host (si tienes `psql` instalado):
-
-```bash
-psql -h 127.0.0.1 -p 5432 -U postgres -d bbs
-```
-
-### Semilla de datos
-
-```bash
-npm run seed
-```
-
-Sin vaciar tablas antes:
+Semilla **sin vaciar** tablas existentes:
 
 ```bash
 npm run seed:keep
 ```
 
-### Vaciar tablas de desarrollo
+Entrar a la base con Docker:
 
 ```bash
-npm run db:reset
+docker exec -it backend-bbs-db psql -U postgres -d bbs
+```
+
+Vaciar tablas de desarrollo (sin borrar el volumen de Docker):
+
+**Windows:**
+
+```powershell
+npm run db:reset:win
+```
+
+**Linux / macOS:**
+
+```bash
+npm run db:reset:linux
 ```
 
 ---
 
-## Arrancar la API
+## 7. Arrancar la API
 
 ```bash
 npm run start:dev
 ```
 
-La API queda en `http://localhost:4000` (prefijo global `/api`).
+- URL: `http://localhost:4000`
+- Prefijo API: `/api`
+
+---
+
+## Resumen rápido
+
+| Sistema | Verificar | Preparar entorno | Vaciar BD |
+|---------|-----------|------------------|-----------|
+| **Windows** | `npm run verify:win` | `npm run setup:win` | `npm run db:reset:win` |
+| **Linux / macOS** | `npm run verify:linux` | `npm run setup:linux` | `npm run db:reset:linux` |
+
+Flujo típico:
+
+```text
+git pull → verify:win|linux → setup:win|linux (si hace falta) → .env → npm run seed → npm run start:dev
+```
+
+---
+
+## Comandos útiles
+
+| Comando | Descripción |
+|---------|-------------|
+| `npm run verify:win` | Verifica entorno (Windows) |
+| `npm run setup:win` | Instala y prepara entorno (Windows) |
+| `npm run verify:linux` | Verifica entorno (Linux/macOS) |
+| `npm run setup:linux` | Instala y prepara entorno (Linux/macOS) |
+| `npm run db:up` | Levanta Postgres en Docker |
+| `npm run db:down` | Detiene contenedores |
+| `npm run db:logs` | Logs del contenedor Postgres |
+| `npm run db:reset:win` | Vacía tablas de desarrollo (Windows) |
+| `npm run db:reset:linux` | Vacía tablas de desarrollo (Linux/macOS) |
+| `npm run seed` | Semilla de datos (vacía tablas antes) |
+| `npm run seed:keep` | Semilla sin vaciar tablas |
+| `npm run build` | Compilar proyecto |
+
+---
+
+## Problemas frecuentes
+
+**El IDE muestra errores de TypeScript pero `npm run build` funciona**  
+→ Usar **Use Workspace Version** en el selector de TypeScript (paso 5).
+
+**`password authentication failed` o `ECONNREFUSED` en Postgres**  
+→ Revisar que Docker esté corriendo (`npm run db:up`) y que `DATABASE_URL` en `.env` coincida con `docker-compose.yml`.
+
+**Aviso `DeprecationWarning` de `pg` al iniciar**  
+→ Advertencia del driver PostgreSQL al conectar; si la API arranca, se puede ignorar en desarrollo.

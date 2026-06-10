@@ -4,8 +4,16 @@
   "description": "",
   "author": "",
   "private": true,
+  "engines": {
+    "node": "22.19.0",
+    "npm": "11.7.0"
+  },
   "license": "UNLICENSED",
   "scripts": {
+    "verify:win": "powershell -ExecutionPolicy Bypass -File scripts/verify-env.ps1",
+    "setup:win": "powershell -ExecutionPolicy Bypass -File scripts/setup-env.ps1",
+    "verify:linux": "bash scripts/verify-env.sh",
+    "setup:linux": "bash scripts/setup-env.sh",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
@@ -21,9 +29,10 @@
     "db:up": "docker compose --profile local up -d",
     "db:down": "docker compose --profile local down",
     "db:logs": "docker compose --profile local logs -f postgres",
-    "db:reset": "docker exec -i backend-bbs-db psql -U postgres -d bbs -f - < scripts/reset-db.sql",
+    "db:reset:win": "powershell -Command \"Get-Content scripts/reset-db.sql | docker exec -i backend-bbs-db psql -U postgres -d bbs\"",
+    "db:reset:linux": "docker exec -i backend-bbs-db psql -U postgres -d bbs < scripts/reset-db.sql",
     "seed": "ts-node -r tsconfig-paths/register src/database/seed/run-seed.ts",
-    "seed:keep": "SEED_CLEAR=false ts-node -r tsconfig-paths/register src/database/seed/run-seed.ts"
+    "seed:keep": "cross-env SEED_CLEAR=false ts-node -r tsconfig-paths/register src/database/seed/run-seed.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -57,6 +66,7 @@
     "@types/node": "^24.0.0",
     "@types/passport-jwt": "^4.0.1",
     "@types/supertest": "^7.0.0",
+    "cross-env": "^10.1.0",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.2",
@@ -69,7 +79,7 @@
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.7.3",
+    "typescript": "5.7.3",
     "typescript-eslint": "^8.20.0"
   },
   "jest": {
