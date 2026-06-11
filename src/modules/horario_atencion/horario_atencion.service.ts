@@ -1,13 +1,17 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { ApiResponse } from 'src/core/interface/api-response';
-import { CITA_GENERATOR, CITAS_WRITER } from 'src/core/tokens/injection.tokens';
-import type { ICitasWriter } from '../citas/interfaces/citas-writer.interface';
-import type { CreateHorarioAtencionDto } from './dto/horario_atencion.dto';
+import { CreateHorarioAtencionDto } from './dto/horario_atencion.dto';
+import { verificarIndependiente } from './helper/horario_atecion.helper';
+import { HorarioAtencionEttra } from './helper/horario_atentencio_ettra';
 import { HorarioAtencionEntity } from './entity/horario_atencion.entity';
-import { HORARIO_ATENCION_MESSAGES } from './interfaces/horario_atencion.messages';
-import type { ICitaGenerator } from './interfaces/cita-generator.interface';
+import { BloqueosHorarioEntity } from './entity/bloqueos_horario.entity';
 
 @Injectable()
 export class HorarioAtencionService {
@@ -16,61 +20,56 @@ export class HorarioAtencionService {
   constructor(
     @InjectDataSource()
     private readonly dataSource: DataSource,
-    @Inject(CITA_GENERATOR)
-    private readonly citaGenerator: ICitaGenerator,
-    @Inject(CITAS_WRITER)
-    private readonly citasWriter: ICitasWriter,
+    readonly horarioAtencionEttra: HorarioAtencionEttra
   ) {}
 
   async createHorarioAtencion(
-    dto: CreateHorarioAtencionDto[],
+    dto: CreateHorarioAtencionDto,
     idUsuario: number,
-  ): Promise<ApiResponse<null>> {
-    if (!dto?.length) {
-      return {
-        status: false,
-        message: HORARIO_ATENCION_MESSAGES.EMPTY_PAYLOAD,
-        data: null,
-      };
+  ): Promise<void> {
+    const dtoVerificado = verificarIndependiente(dto, idUsuario);
+    const horariosAInsertar =
+      this.horarioAtencionEttra.estructuraHorarioAtencion(dtoVerificado);
+
+    if (horariosAInsertar.length === 0) {
+      throw new BadRequestException('No se generaron horarios para insertar');
     }
-
-    const registerData = dto.map((item) => ({
-      ...item,
-      fecha: new Date(item.fecha),
-      id_usuario: idUsuario,
-    }));
-
-    const horariosParaCitas = dto.map((item) => ({
-      ...item,
-      id_usuario: idUsuario,
-    }));
 
     try {
       await this.dataSource.transaction(async (manager) => {
-        await manager.getRepository(HorarioAtencionEntity).save(registerData);
-
-        const listaCitas = this.citaGenerator.generar([]);//se puso el [] para calmar el error de typescript !!ESTO GENERARÁ BUG!!
-        if (listaCitas.length === 0) {
-          this.logger.warn(
-            'No se generaron citas: revisa hora_inicio, hora_fin y tiempo_proceso',
+        for (const h of horariosAInsertar) {
+          const resultado = await manager.insert(
+            HorarioAtencionEntity,
+            h.horario,
           );
+          const idHorarioAtencion = resultado.identifiers[0]
+            ?.id_horario_atencion as number | undefined;
+
+          if (!idHorarioAtencion) {
+            throw new InternalServerErrorException(
+              'No se pudo obtener el id del horario insertado',
+            );
+          }
+
+          const bloqueos = this.horarioAtencionEttra.estructuraBloqueosHorario(
+            h.bloqueos ?? [],
+            idHorarioAtencion,
+          );
+
+          if (bloqueos.length > 0) {
+            await manager.insert(BloqueosHorarioEntity, bloqueos);
+          }
         }
-
-        await this.citasWriter.createCita(listaCitas, manager);
       });
-
-      return {
-        status: true,
-        message: HORARIO_ATENCION_MESSAGES.SUCCESS,
-        data: null,
-      };
     } catch (error) {
-      this.logger.error('Error al guardar horarios de atención', error);
-      return {
-        status: false,
-        message: HORARIO_ATENCION_MESSAGES.SAVE_ERROR,
-        data: null,
-      };
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      this.logger.error('Error al crear horarios de atención', error);
+      throw new InternalServerErrorException(
+        'No se pudieron crear los horarios de atención',
+      );
     }
   }
 }

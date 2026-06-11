@@ -6,9 +6,4 @@ import { CitasService } from './citas.service';
 export class CitasController {
   constructor(private readonly citasService: CitasService) {}
 
-  @Public()
-  @Get('cargar-citas')
-  cargarCitas() {
-    return this.citasService.cargarCitas();
-  }
 }
