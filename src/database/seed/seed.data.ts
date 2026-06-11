@@ -202,7 +202,7 @@ export const horariosAtencion = [
     hora_inicio: '09:00:00',
     hora_fin: '18:00:00',
     duracion_slot: 30,
-    tiempo_libre: 0,
+    tiempo_entre_slot: 0,
     estado_ha: 1,
   },
   {
@@ -210,8 +210,8 @@ export const horariosAtencion = [
     fecha: '2026-05-20',
     hora_inicio: '10:00:00',
     hora_fin: '14:00:00',
-    duracion_slot_min: 30,
-    tiempo_libre: 0,
+    duracion_slot: 30,
+    tiempo_entre_slot: 0,
     estado_ha: 1,
   },
   {
@@ -219,8 +219,8 @@ export const horariosAtencion = [
     fecha: '2026-05-21',
     hora_inicio: '11:00:00',
     hora_fin: '19:00:00',
-    duracion_slot_min: 45,
-    tiempo_libre: 0,
+    duracion_slot: 45,
+    tiempo_entre_slot: 0,
     estado_ha: 1,
   },
 ];

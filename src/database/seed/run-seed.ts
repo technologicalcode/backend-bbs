@@ -280,15 +280,20 @@ async function runSeed(): Promise<void> {
     const horarioIdByKey = new Map<string, number>();
     const horarioRows = horariosAtencion.flatMap((h) => {
       const usuario = usuarioByKey.get(h.usuarioKey);
-      if (!usuario) return [];
+      const usuarioSeed = usuarios.find((u) => u.key === h.usuarioKey);
+      const negocio = usuarioSeed
+        ? negocioByKey.get(usuarioSeed.negocioKey)
+        : undefined;
+      if (!usuario || !negocio) return [];
       return [
         horarioRepo.create({
+          id_negocio: negocio.id_negocio,
           id_usuario: usuario.id_usuario,
           fecha: new Date(h.fecha),
           hora_inicio: h.hora_inicio,
           hora_fin: h.hora_fin,
           duracion_slot: h.duracion_slot,
-          tiempo_libre: h.tiempo_libre,
+          tiempo_entre_slot: h.tiempo_entre_slot,
           estado_ha: h.estado_ha,
         }),
       ];

@@ -1,66 +1,121 @@
-import { applyDecorators } from '@nestjs/common';
-import { Transform, Type } from 'class-transformer';
-import type { TransformFnParams } from 'class-transformer';
+import { Type } from 'class-transformer';
 import {
-  IsDateString,
+  ArrayMinSize,
+  IsArray,
+  IsBoolean,
   IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
   Matches,
+  MaxLength,
   Min,
-  ValidateIf,
+  ValidateNested,
 } from 'class-validator';
 
-/** HH:mm o HH:mm:ss (24 h) */
-const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d(:[0-5]\d)?$/;
+const DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+const TIME_REGEX = /^\d{2}:\d{2}(:\d{2})?$/;
 
-function emptyStringToNull({ value }: TransformFnParams): unknown {
-  if (value === '' || value === undefined) {
-    return null;
-  }
-  return value;
+export class BloqueoHaDto {
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  id_horario_atencion?: number;
+
+  @IsString()
+  @IsNotEmpty()
+  @Matches(TIME_REGEX, {
+    message: 'hora_inicio debe tener formato HH:mm o HH:mm:ss',
+  })
+  hora_inicio: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Matches(TIME_REGEX, {
+    message: 'hora_fin debe tener formato HH:mm o HH:mm:ss',
+  })
+  hora_fin: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(255)
+  motivo: string;
 }
 
-function OptionalTimeField(message: string) {
-  return applyDecorators(
-    IsOptional(),
-    Transform(emptyStringToNull),
-    ValidateIf((_, value) => value != null),
-    IsString(),
-    Matches(TIME_PATTERN, { message }),
-  );
+export class PatronHaDto {
+  @IsString()
+  @IsNotEmpty()
+  @Matches(DATE_REGEX, { message: 'fecha debe tener formato YYYY-MM-DD' })
+  fecha: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Matches(TIME_REGEX, {
+    message: 'hora_inicio debe tener formato HH:mm o HH:mm:ss',
+  })
+  hora_inicio: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Matches(TIME_REGEX, {
+    message: 'hora_fin debe tener formato HH:mm o HH:mm:ss',
+  })
+  hora_fin: string;
+
+  @IsArray()
+  @ArrayMinSize(1)
+  @IsString({ each: true })
+  @Matches(DATE_REGEX, {
+    each: true,
+    message: 'cada fecha en repetir_en_fechas debe tener formato YYYY-MM-DD',
+  })
+  repetir_en_fechas: string[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => BloqueoHaDto)
+  bloqueos?: BloqueoHaDto[] | [];
+}
+
+export class EmpleadoHaDto {
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  id_usuario?: number;
+
+  @IsArray()
+  @ArrayMinSize(1)
+  @ValidateNested({ each: true })
+  @Type(() => PatronHaDto)
+  Patron: PatronHaDto[];
 }
 
 export class CreateHorarioAtencionDto {
-  
-  id_usuario: number;
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  id_negocio: number;
 
-  @OptionalTimeField('hora_inicio debe tener formato HH:mm o HH:mm:ss')
-  hora_inicio?: string | null;
-
-  @OptionalTimeField('hora_fin debe tener formato HH:mm o HH:mm:ss')
-  hora_fin?: string | null;
-
-  @IsDateString()
+  @IsBoolean()
   @IsNotEmpty()
-  fecha: string;
+  es_independiente: boolean;
 
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
   duracion_slot: number;
 
-  tiempo_libre: number;
+  @Type(() => Number)
+  @IsInt()
+  @Min(0)
+  tiempo_entre_slot: number;
 
-  bloqueos_horario: DtaBloqueoHorario[];
-}
-
-class DtaBloqueoHorario{
-  
-  id_horario_atencion: number;
-
-  hora_inicio: string;
-
-  hora_fin: string;
-
-  motivo: string | null;
-
+  @IsArray()
+  @ArrayMinSize(1)
+  @ValidateNested({ each: true })
+  @Type(() => EmpleadoHaDto)
+  empleados: EmpleadoHaDto[];
 }

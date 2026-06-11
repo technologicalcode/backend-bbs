@@ -9,6 +9,7 @@ import {
 import { TipoNegocioEntity } from './tipo-negocio.entity';
 import { UsuariosEntity } from '../../usuarios/entity/usuarios.entity';
 import { ConversacionWspEntity } from '../../WhatsApp/entity/conversacion_wsp.entity';
+import { HorarioAtencionEntity } from 'src/modules/horario_atencion/entity/horario_atencion.entity';
 
 @Entity('negocio')
 export class NegocioEntity {
@@ -51,4 +52,7 @@ export class NegocioEntity {
 
   @OneToMany(() => ConversacionWspEntity, (c) => c.negocio)
   conversaciones_wsp: ConversacionWspEntity[];
+
+  @OneToMany(() => HorarioAtencionEntity, (h) => h.negocio)
+  horarios: HorarioAtencionEntity[];
 }

@@ -6,9 +6,9 @@ import { HorarioAtencionController } from './horario_atencion.controller';
 import { HorarioAtencionService } from './horario_atencion.service';
 import { HorarioAtencionEntity } from './entity/horario_atencion.entity';
 import { BloqueosHorarioEntity } from './entity/bloqueos_horario.entity';
-import { HorarioCitaGeneratorService } from './services/horario-cita-generator.service';
 import { BloqueosHorarioController } from './bloqueos_horario/bloqueos_horario.controller';
 import { BloqueosHorarioService } from './bloqueos_horario/bloqueos_horario.service';
+import { HorarioAtencionEttra } from './helper/horario_atentencio_ettra';
 
 @Module({
   imports: [
@@ -19,8 +19,7 @@ import { BloqueosHorarioService } from './bloqueos_horario/bloqueos_horario.serv
   providers: [
     HorarioAtencionService,
     BloqueosHorarioService,
-    HorarioCitaGeneratorService,
-    { provide: CITA_GENERATOR, useExisting: HorarioCitaGeneratorService },
+    HorarioAtencionEttra
   ],
   exports: [TypeOrmModule, BloqueosHorarioService],
 })
