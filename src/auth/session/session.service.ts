@@ -15,7 +15,7 @@ export class SessionService {
   ) {}
 
   async getSession(payload: LoginPayload): Promise<ApiResponse<SessionData>> {
-    const user = await this.sessionUser.loadUser(payload.id_usuario_credencial);
+    const user = await this.sessionUser.loadUser(payload.username);
     const { roles, permisos, allowedPermisoIds } =
       await this.sessionAuthorization.resolveRolesAndPermisos(
         payload.id_usuario,

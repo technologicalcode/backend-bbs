@@ -7,12 +7,12 @@ export async function toLoginPayload(
   credencial: UsuarioCredencialesEntity,
   usuariosRepo: Repository<UsuariosEntity>,
 ): Promise<LoginPayload> {
+  
   const usuario = await usuariosRepo.findOne({
     where: { id_usuario: credencial.id_usuario },
   });
 
   return {
-    id_usuario_credencial: credencial.id_usuario_credencial,
     username: credencial.username,
     id_usuario: usuario?.id_usuario ?? credencial.id_usuario,
   };

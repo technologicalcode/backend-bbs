@@ -1,5 +1,4 @@
 export interface LoginPayload {
-  id_usuario_credencial: string;
   username: string;
   id_usuario: number;
 }

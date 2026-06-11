@@ -61,7 +61,7 @@ export class TokenIssuerService {
     }
 
     const payload: LoginPayload = {
-      id_usuario_credencial: decoded.id_usuario_credencial,
+      
       username: decoded.username,
       id_usuario: decoded.id_usuario,
     };
