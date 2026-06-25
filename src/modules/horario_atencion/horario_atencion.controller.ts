@@ -10,8 +10,7 @@ export class HorarioAtencionController {
 
   @Post('create')
   createHorarioAtencion(
-    @Body()
-    dto: CreateHorarioAtencionDto,
+    @Body() dto: CreateHorarioAtencionDto,
     @CurrentUser() user: LoginPayload,
   ) {
     return this.horarioSrv.createHorarioAtencion(dto, user.id_usuario);
