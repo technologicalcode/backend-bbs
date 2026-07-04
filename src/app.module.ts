@@ -12,6 +12,7 @@ import { RbacModule } from './modules/rbac/rbac.module';
 import { NegocioModule } from './modules/negocio/negocio.module';
 import { WhatsAppModule } from './modules/WhatsApp/WhatsApp.module';
 import { PlanModule } from './modules/plan/plan.module';
+import { servicioModulo } from './modules/servicio_negocio/servicio_negocio.module';
 
 @Module({
   imports: [
@@ -27,6 +28,8 @@ import { PlanModule } from './modules/plan/plan.module';
     SessionModule,
     UsuariosModule,
     PlanModule,
+    servicioModulo,
+
   ],
 })
 export class AppModule {}
