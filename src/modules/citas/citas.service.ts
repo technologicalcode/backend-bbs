@@ -22,10 +22,7 @@ export class CitasService implements ICitasWriter {
     private readonly usuariosRepository: Repository<UsuariosEntity>,
   ) {}
 
-  async createCita(
-    citas: CitaGenerada[],
-    manager?: EntityManager,
-  ): Promise<void> {
+  async createCita(): Promise<void> {
     
   }
     

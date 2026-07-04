@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CITA_GENERATOR } from 'src/core/tokens/injection.tokens';
 import { CitasModule } from '../citas/citas.module';
 import { HorarioAtencionController } from './horario_atencion.controller';
 import { HorarioAtencionService } from './horario_atencion.service';
