@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ApiResponse } from 'src/core/interface/api-response';
+import { ApiResponse, ok } from 'src/core/interface/api-response';
 import { PermisoEntity } from '../entity/permiso.entity';
 import { PadreMenuEntity } from '../entity/padre_menu.entity';
 import { MenuEntity } from '../entity/menu.entity';
@@ -52,10 +52,6 @@ export class MenuAdminService {
       padre_menu,
     });
     const saved = await this.menuRepo.save(row);
-    return {
-      status: true,
-      message: 'Ítem de menú creado',
-      data: saved,
-    };
+    return ok(saved, 'Ítem de menú creado');
   }
 }

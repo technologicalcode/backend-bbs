@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ApiResponse } from 'src/core/interface/api-response';
+import type { AuthApiResponse } from 'src/auth/interface/auth-api-response';
 import type { LoginPayload } from 'src/auth/login/interface/login.interface';
 import type { SessionData } from './session.interface';
 import { SessionAuthorizationService } from './services/session-authorization.service';
@@ -14,7 +14,7 @@ export class SessionService {
     private readonly sessionMenu: SessionMenuService,
   ) {}
 
-  async getSession(payload: LoginPayload): Promise<ApiResponse<SessionData>> {
+  async getSession(payload: LoginPayload): Promise<AuthApiResponse<SessionData>> {
     const user = await this.sessionUser.loadUser(payload.username);
     const { roles, permisos, allowedPermisoIds } =
       await this.sessionAuthorization.resolveRolesAndPermisos(

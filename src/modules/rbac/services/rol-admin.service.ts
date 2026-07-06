@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ApiResponse } from 'src/core/interface/api-response';
+import { ApiResponse, ok } from 'src/core/interface/api-response';
 import { RolEntity } from '../entity/rol.entity';
 import { CreateRolDto } from '../dto/create-rol.dto';
 
@@ -24,10 +24,6 @@ export class RolAdminService {
       descripcion: dto.descripcion.trim(),
     });
     const saved = await this.rolRepo.save(row);
-    return {
-      status: true,
-      message: 'Rol creado',
-      data: saved,
-    };
+    return ok(saved, 'Rol creado');
   }
 }

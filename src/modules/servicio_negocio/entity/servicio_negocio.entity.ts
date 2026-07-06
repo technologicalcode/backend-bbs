@@ -23,7 +23,6 @@ export class ServicioNegocioEntity {
     @Column({name: 'estado_servicio_negocio', type: 'int2', default: 1})
     estado_servicio_negocio: number
 
-
     @ManyToOne(()=>ServiciosEntity, (s)=>s.servicio_negocio)
     @JoinColumn({name:'id_servicio'})
     servicio: ServiciosEntity

@@ -1,4 +1,13 @@
-import { Controller, Param, Body, Post, Patch, Delete, Get, } from "@nestjs/common";
+import {
+    Controller,
+    Param,
+    Body,
+    Post,
+    Patch,
+    Delete,
+    Get,
+    ParseIntPipe,
+} from '@nestjs/common';
 import { ServiciosService } from "./servicios.service";
 import { CurrentUser } from "src/auth/decorators/current-user.decorator";
 import type { LoginPayload } from "src/auth/login/interface/login.interface";
@@ -28,20 +37,18 @@ export class ServiciosController {
         return this.servicioSrv.updateService(idservicio,servicioMod)
     }
 
-    @Delete('id_servicio')
+    @Delete(':id_servicio')
     deleteServicio(
-        @Param() idservicio : number,
-    ){
-        return this.servicioSrv.deleteServicio(idservicio)
+        @Param('id_servicio', ParseIntPipe) id_servicio: number,
+    ) {
+        return this.servicioSrv.deleteServicio(id_servicio);
     }
 
 
-    @Get('id_negocio')
+    @Get(':id_negocio')
     getServices(@Param() idnegocio : number){
         return this.servicioSrv.findAllServices(idnegocio)
     }
     
-
-
 }
 

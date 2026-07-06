@@ -1,144 +1,86 @@
 import {
-    Injectable,
-    Logger,
-    InternalServerErrorException,
-    BadRequestException
-} from "@nestjs/common";
-import { IcreateServicio, IServicio } from "../interfaces/servicio.interface";
-import { ServiciosEntity } from "../entity/servicios.entity";
-import { DataSource } from "typeorm";
-import { InjectDataSource } from "@nestjs/typeorm";
-import { HttpException } from "@nestjs/common";
-import { ServicioNegocioEntity } from "../entity/servicio_negocio.entity";
-
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { IcreateServicio, IServicio } from '../interfaces/servicio.interface';
+import { ServiciosEntity } from '../entity/servicios.entity';
+import { ServicioNegocioEntity } from '../entity/servicio_negocio.entity';
 
 @Injectable()
 export class ServiciosService implements IcreateServicio {
-    private readonly logger = new Logger(ServiciosService.name)
+  constructor(
+    @InjectRepository(ServiciosEntity)
+    private readonly serviciosRepo: Repository<ServiciosEntity>,
+    @InjectRepository(ServicioNegocioEntity)
+    private readonly servicioNegocioRepo: Repository<ServicioNegocioEntity>,
+  ) {}
 
-    constructor(
-        @InjectDataSource()
-        private readonly datasrc: DataSource
-    ) { }
+  async findOneService(id_servicio: number): Promise<ServiciosEntity> {
+    const servicio = await this.serviciosRepo.findOne({
+      where: { id_servicio },
+    });
 
-    async findOneService(id_servicio: number): Promise<ServiciosEntity> {
-        try {
-            return await this.datasrc.transaction(async (manager) => {
-                const servicioEncontrado =
-                    await manager.findOne(ServiciosEntity,
-                        { where: { id_servicio } }
-                    );
-
-                if (!servicioEncontrado) {
-                    throw new BadRequestException(
-                        'No se encontró un servicio con ese id'
-                    );
-                }
-                return servicioEncontrado;
-            }
-            );
-
-        } catch (e) {
-
-            if (e instanceof HttpException) {
-                throw e;
-            }
-
-            this.logger.error('No se pudo culminar la búsqueda del servicio',e);
-
-            throw new InternalServerErrorException(
-                'No se pudo encontrar el servicio'
-            );
-        }
+    if (!servicio) {
+      throw new NotFoundException('No se encontró un servicio con ese id');
     }
 
-    async findAllServices(
-        id_negocio: number
-    ): Promise<ServicioNegocioEntity[]> {
-        try {
+    return servicio;
+  }
 
-            return await this.datasrc.manager.find(
-                ServicioNegocioEntity,{
-                    where: {
-                        id_negocio
-                    },
-                    relations: {
-                        servicio: true
-                    }
-                }
-            );
+  async findAllServices(
+    id_negocio: number,
+  ): Promise<ServicioNegocioEntity[]> {
+    return this.servicioNegocioRepo.find({
+      where: { id_negocio },
+      relations: { servicio: true },
+    });
+  }
 
-        } catch (error) {
+  async createServicio(service: IServicio, _user_id: number): Promise<void> {
+    this.validarServicio(service);
 
-            this.logger.error('Error al obtener los servicios',error);
+    await this.serviciosRepo.insert({
+      nombre: service.nombre.trim(),
+      descripcion: service.descripcion.trim(),
+    });
+  }
 
-            throw new InternalServerErrorException('No se pudieron obtener los servicios');
-        }
-    }
-    async createServicio(service: IServicio, user_id: number): Promise<void> {
-        if (service.descripcion == null || service.nombre == null) {
-            throw new BadRequestException('No se pudo crear servicio, Campos faltantes')
-        }
-        try {
-            await this.datasrc.transaction(async (manager) => {
-                const resultado = await manager.insert(ServiciosEntity, service)
-            })
+  async updateService(
+    id_servicio: number,
+    serviciomod: IServicio,
+  ): Promise<void> {
+    this.validarServicio(serviciomod);
 
-        } catch (e) {
-            this.logger.error('Error al integrar un servicio', e)
-            throw new InternalServerErrorException('No se pude registrar el servicio')
-        }
+    const servicio = await this.serviciosRepo.findOne({
+      where: { id_servicio },
+    });
+
+    if (!servicio) {
+      throw new NotFoundException('Servicio no encontrado');
     }
 
-    async updateService(idservicio: number, serviciomod: IServicio): Promise<void> {
-        try {
+    servicio.nombre = serviciomod.nombre.trim();
+    servicio.descripcion = serviciomod.descripcion.trim();
 
-            await this.datasrc.transaction(async (manager) => {
+    await this.serviciosRepo.save(servicio);
+  }
 
-                const servicio = await manager.findOne(
-                    ServiciosEntity,
-                    {
-                        where: {
-                            id_servicio: idservicio
-                        }
-                    }
-                );
-                if (!servicio) {
-                    throw new InternalServerErrorException(
-                        'Servicio no encontrado'
-                    );
-                }
-                servicio.nombre = serviciomod.nombre;
-                servicio.descripcion = serviciomod.descripcion;
+  async deleteServicio(id_servicio: number): Promise<void> {
+    const { affected } = await this.serviciosRepo.delete({ id_servicio });
 
-                await manager.save(servicio);
-
-            });
-
-
-        } catch (error) {
-            this.logger.error('Error no se puedo modificar servicio', error)
-            throw new InternalServerErrorException('no se puedo modificar un servicio')
-        }
-
+    if (!affected) {
+      throw new NotFoundException('Servicio no encontrado');
     }
+  }
 
-
-    async deleteServicio(id_servicio: number): Promise<void> {
-        try {
-            await this.findOneService(id_servicio);
-
-            await this.datasrc.transaction(async (manager) => {
-                await manager.delete(ServiciosEntity, {
-                    id_servicio: id_servicio
-                })
-            })
-
-        } catch (error) {
-            this.logger.error('No se puedo eliminar el servicio', error)
-            throw new InternalServerErrorException('No se pudo eliminar el servicio')
-        }
-
-
+  private validarServicio(service: IServicio): void {
+    if (!service.nombre?.trim() || !service.descripcion?.trim()) {
+      throw new BadRequestException(
+        'No se pudo procesar el servicio: nombre y descripcion son obligatorios',
+      );
     }
+  }
 }

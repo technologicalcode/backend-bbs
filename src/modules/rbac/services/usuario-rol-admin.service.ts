@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ApiResponse } from 'src/core/interface/api-response';
+import { ApiResponse, ok } from 'src/core/interface/api-response';
 import { UsuariosEntity } from 'src/modules/usuarios/entity/usuarios.entity';
 import { RolEntity } from '../entity/rol.entity';
 import { UsuarioRolEntity } from '../entity/usuario-rol.entity';
@@ -48,10 +48,6 @@ export class UsuarioRolAdminService {
     }
     const row = this.usuarioRolRepo.create({ usuario, rol });
     const saved = await this.usuarioRolRepo.save(row);
-    return {
-      status: true,
-      message: 'Usuario-rol asignado',
-      data: saved,
-    };
+    return ok(saved, 'Usuario-rol asignado');
   }
 }

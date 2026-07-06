@@ -1,7 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ApiResponse } from 'src/core/interface/api-response';
+import { ApiResponse, ok } from 'src/core/interface/api-response';
 import { PermisoEntity } from '../entity/permiso.entity';
 import { CreatePermisoDto } from '../dto/create-permiso.dto';
 
@@ -26,10 +26,6 @@ export class PermisoAdminService {
       modulo: dto.modulo?.trim() ?? null,
     });
     const saved = await this.permisoRepo.save(row);
-    return {
-      status: true,
-      message: 'Permiso creado',
-      data: saved,
-    };
+    return ok(saved, 'Permiso creado');
   }
 }

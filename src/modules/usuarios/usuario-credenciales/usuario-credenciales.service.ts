@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { hash } from 'bcrypt';
 import { Repository } from 'typeorm';
-import { ApiResponse } from 'src/core/interface/api-response';
+import { ApiResponse, fail, ok } from 'src/core/interface/api-response';
 import { UsuarioCredencialesEntity } from '../entity/usuario-credenciales.entity';
 import { CreateUsuarioCredencialesDto } from './dto/usuario-credenciales.dto';
 
@@ -18,11 +18,7 @@ export class UsuarioCredencialesService {
   ): Promise<ApiResponse> {
     const idUsuario = dto.id_usuario ?? dto.id_bb;
     if (idUsuario == null) {
-      return {
-        status: false,
-        message: 'id_usuario es obligatorio',
-        data: null,
-      };
+      return fail('id_usuario es obligatorio');
     }
 
     const password = await hash(dto.password, 10);
@@ -36,21 +32,16 @@ export class UsuarioCredencialesService {
     const result = await this.credencialesRepo.save(newCredencial);
 
     if (result) {
-      return {
-        status: true,
-        message: 'Credenciales creadas correctamente',
-        data: {
+      return ok(
+        {
           id_usuario_credencial: result.id_usuario_credencial,
           username: result.username,
           id_usuario: result.id_usuario,
         },
-      };
+        'Credenciales creadas correctamente',
+      );
     }
 
-    return {
-      status: false,
-      message: 'No se pudieron crear las credenciales',
-      data: null,
-    };
+    return fail('No se pudieron crear las credenciales');
   }
 }

@@ -1,8 +1,10 @@
 import 'dotenv/config';
 import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
+import { HttpExceptionFilter } from './core/filters/http-exception.filter';
+import { TransformResponseInterceptor } from './core/interceptors/transform-response.interceptor';
 
 function resolveCorsOrigin(): boolean | string[] {
   const raw = process.env.CORS_ORIGIN?.trim();
@@ -44,6 +46,11 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  const reflector = app.get(Reflector);
+  app.useGlobalInterceptors(new TransformResponseInterceptor(reflector));
+  app.useGlobalFilters(new HttpExceptionFilter());
+
   app.setGlobalPrefix('api');
   await app.listen(process.env.PORT ?? 4000);
   console.log(`Server is running on port ${process.env.PORT ?? 4000}`);
