@@ -15,11 +15,13 @@ import { PadreMenuEntity } from '../../modules/rbac/entity/padre_menu.entity';
 import { HorarioAtencionEntity } from '../../modules/horario_atencion/entity/horario_atencion.entity';
 import { BloqueosHorarioEntity } from '../../modules/horario_atencion/entity/bloqueos_horario.entity';
 import { CitasEntity } from '../../modules/citas/entity/citas.entity';
-import { ConversacionWspEntity } from '../../modules/WhatsApp/entity/conversacion_wsp.entity';
+import { ConversacionEntity } from '../../modules/chat/entity/conversacion.entity';
 import { PlanEntity } from '../../modules/plan/entity/plan.entity';
 import { NegocioPlanEntity } from '../../modules/plan/entity/negocio_plan.entity';
 import { PlanPermisoEntity } from '../../modules/plan/entity/plan_permiso.entity';
 import { PagosEntity } from '../../modules/plan/entity/pagos.entity';
+import { ServiciosEntity } from '../../modules/servicio_negocio/entity/servicios.entity';
+import { ServicioNegocioEntity } from '../../modules/servicio_negocio/entity/servicio_negocio.entity';
 
 const LOCAL_DATABASE_URL = 'postgresql://postgres:postgres@127.0.0.1:5432/bbs';
 
@@ -48,7 +50,7 @@ export function createSeedDataSource(): DataSource {
       PadreMenuEntity,
       MenuEntity,
       ClienteEntity,
-      ConversacionWspEntity,
+      ConversacionEntity,
       HorarioAtencionEntity,
       BloqueosHorarioEntity,
       CitasEntity,
@@ -56,6 +58,8 @@ export function createSeedDataSource(): DataSource {
       NegocioPlanEntity,
       PlanPermisoEntity,
       PagosEntity,
+      ServiciosEntity,
+      ServicioNegocioEntity,
     ],
     synchronize: false,
   });

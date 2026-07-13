@@ -4,7 +4,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { ConversacionWspEntity } from 'src/modules/WhatsApp/entity/conversacion_wsp.entity';
+import { ConversacionEntity } from 'src/modules/chat/entity/conversacion.entity';
 import { CitasEntity } from 'src/modules/citas/entity/citas.entity';
 
 @Entity('clientes')
@@ -27,8 +27,8 @@ export class ClienteEntity {
   @Column({ name: 'estado_cl', type: 'int2' })
   estado_cl: number;
 
-  @OneToMany(() => ConversacionWspEntity, (c) => c.cliente)
-  conversaciones_wsp: ConversacionWspEntity[];
+  @OneToMany(() => ConversacionEntity, (c) => c.cliente)
+  conversaciones: ConversacionEntity[];
 
   @OneToMany(() => CitasEntity, (c) => c.cliente)
   citas: CitasEntity[];

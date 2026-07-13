@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { TipoNegocioEntity } from './tipo-negocio.entity';
 import { UsuariosEntity } from '../../usuarios/entity/usuarios.entity';
-import { ConversacionWspEntity } from '../../WhatsApp/entity/conversacion_wsp.entity';
+import { ConversacionEntity } from '../../chat/entity/conversacion.entity';
 import { HorarioAtencionEntity } from 'src/modules/horario_atencion/entity/horario_atencion.entity';
 import { ServicioNegocioEntity } from 'src/modules/servicio_negocio/entity/servicio_negocio.entity';
 
@@ -51,8 +51,8 @@ export class NegocioEntity {
   @OneToMany(() => UsuariosEntity, (u) => u.negocio)
   usuarios: UsuariosEntity[];
 
-  @OneToMany(() => ConversacionWspEntity, (c) => c.negocio)
-  conversaciones_wsp: ConversacionWspEntity[];
+  @OneToMany(() => ConversacionEntity, (c) => c.negocio)
+  conversaciones: ConversacionEntity[];
 
   @OneToMany(() => HorarioAtencionEntity, (h) => h.negocio)
   horarios: HorarioAtencionEntity[];
