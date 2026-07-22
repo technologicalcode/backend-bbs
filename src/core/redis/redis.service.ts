@@ -17,18 +17,23 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     const options: RedisOptions = {
       maxRetriesPerRequest: 3,
       lazyConnect: true,
-      // En producción: REDIS_PASSWORD del .env (también aplica si hay REDIS_URL)
       ...(config.password ? { password: config.password } : {}),
       ...(config.tls ? { tls: {} } : {}),
     };
 
-    this.client = config.url
-      ? new Redis(config.url, options)
-      : new Redis({
-          host: config.host,
-          port: config.port,
-          ...options,
-        });
+    if (config.isProduction) {
+      // Producción: únicamente REDIS_URL (+ REDIS_PASSWORD opcional)
+      this.client = new Redis(config.url!, options);
+      this.logger.log('Redis: modo producción (REDIS_URL)');
+    } else {
+      // Local: REDIS_HOST + REDIS_PORT
+      this.client = new Redis({
+        host: config.host,
+        port: config.port,
+        ...options,
+      });
+      this.logger.log(`Redis: modo local (${config.host}:${config.port})`);
+    }
 
     this.client.on('error', (err) => {
       this.logger.error(`Redis error: ${err.message}`);
