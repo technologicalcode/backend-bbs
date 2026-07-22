@@ -4,7 +4,7 @@ import {
   OnModuleDestroy,
   OnModuleInit,
 } from '@nestjs/common';
-import Redis from 'ioredis';
+import Redis, { type RedisOptions } from 'ioredis';
 import { getRedisConfig } from './redis.config';
 
 @Injectable()
@@ -14,18 +14,20 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
 
   constructor() {
     const config = getRedisConfig();
+    const options: RedisOptions = {
+      maxRetriesPerRequest: 3,
+      lazyConnect: true,
+      // En producción: REDIS_PASSWORD del .env (también aplica si hay REDIS_URL)
+      ...(config.password ? { password: config.password } : {}),
+      ...(config.tls ? { tls: {} } : {}),
+    };
 
     this.client = config.url
-      ? new Redis(config.url, {
-          maxRetriesPerRequest: 3,
-          lazyConnect: true,
-        })
+      ? new Redis(config.url, options)
       : new Redis({
           host: config.host,
           port: config.port,
-          password: config.password,
-          maxRetriesPerRequest: 3,
-          lazyConnect: true,
+          ...options,
         });
 
     this.client.on('error', (err) => {
