@@ -7,6 +7,9 @@ import { ChatService } from './chat.service';
 import { ConversacionController } from './conversacion/conversacion.controller';
 import { ConversacionService } from './conversacion/conversacion.service';
 import { ConversacionEntity } from './entity/conversacion.entity';
+import { WhatsAppController } from './whatsApp/whatsApp.controller';
+import { WebhookController } from './webhook/webhook.controller';
+import { WhatsAppService } from './whatsApp/whatsApp.service';
 
 @Module({
   imports: [
@@ -16,8 +19,19 @@ import { ConversacionEntity } from './entity/conversacion.entity';
       NegocioEntity,
     ]),
   ],
-  controllers: [ChatController, ConversacionController],
-  providers: [ChatService, ConversacionService],
-  exports: [ConversacionService, TypeOrmModule],
+  controllers: [
+    ChatController
+   ,ConversacionController
+   ,WhatsAppController
+   ,WebhookController
+  ],
+  providers: [
+    ChatService,
+    WhatsAppService,
+    ConversacionService],
+  exports: [
+    ConversacionService,
+    WhatsAppService,
+   TypeOrmModule],
 })
 export class ChatModule {}
