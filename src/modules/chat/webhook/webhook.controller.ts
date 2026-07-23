@@ -22,6 +22,13 @@ export class WebhookController {
     @Query('hub.challenge') challenge: string,
     @Res() res: any,
   ) {
+    console.log('verificacion data',{
+      mode,
+      token,
+      challenge,
+      expected: process.env.WEBHOOK_VERIFY_TOKEN,
+    });
+
     if (
       mode === 'subscribe' &&
       token === process.env.WEBHOOK_VERIFY_TOKEN
